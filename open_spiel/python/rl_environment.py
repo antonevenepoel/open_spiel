@@ -256,6 +256,7 @@ class Environment(object):
           `StepType.FIRST`.
         step_type: A `StepType` value.
     """
+
     assert len(actions) == self.num_actions_per_step, (
         "Invalid number of actions! Expected {}".format(
             self.num_actions_per_step))
