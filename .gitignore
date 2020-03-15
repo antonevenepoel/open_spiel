@@ -39,3 +39,6 @@ open_spiel/scripts/jill.sh
 .vscode/
 
 open_spiel/cmake-build-debug/
+
+# NOX
+.nox/
