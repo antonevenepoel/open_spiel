@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
 
-payoff_matrix_prisoners_dilemma = np.array([[[3, 0],[5,1]],[[3,5],[0,1]]])
-payoff_matrix_matching_pennies = np.array([[[1,0],[0,1]],[[0,1],[1,0]]])
+payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
+payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
 payoff_matrix_battle_of_the_sexes = np.array([[[2,0],[0,1]],[[1,0],[0,2]]])
 payoff_matrix_rock_paper_scissors = np.array([[[0,-1,1],[1,0,-1],[-1,1,0]],[[0,1,-1],[-1,0,1],[1,-1,0]]])
 

@@ -85,16 +85,18 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
             action0 = cur_agents[0].step(time_step, is_evaluation= True).action
             action1 = cur_agents[1].step(time_step, is_evaluation= True).action
             time_step = env.step([action0, action1])
-        print(time_step.rewards)
+
+        # print(time_step.rewards)
+        # Episode is over, step all agents with final state.
+        for agent in cur_agents:
+            agent.step(time_step)
+
         if time_step.rewards[0] > 0:
-            wins[0] +=1
+            wins[0] += 1
         else:
             wins[1] += 1
 
-
-        for agent in cur_agents:
-            agent.step(time_step)
-    return wins
+    return wins / num_episodes
 
 
 def main(_):

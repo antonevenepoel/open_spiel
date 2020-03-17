@@ -66,9 +66,7 @@ def eval_against_random_bots(env, our_agent, other_agent, num_episodes):
         if time_step.rewards[0] == 1:
             wins[0] += 1
         elif (time_step.rewards[1] == 1) :
-            wins[1] +=1
-
-
+            wins[1] += 1
     return wins
 
 

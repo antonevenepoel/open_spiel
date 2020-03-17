@@ -41,7 +41,7 @@ from open_spiel.python.algorithms import tabular_qlearner
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_integer("num_episodes", int(5e4), "Number of train episodes.")
+flags.DEFINE_integer("num_episodes", int(1e5), "Number of train episodes.")
 
 
 
@@ -55,17 +55,12 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
             cur_agents = [random_agents[0], trained_agents[1]]
         for _ in range(num_episodes):
             time_step = env.reset()
-
-
             while not time_step.last():
-                action0 = cur_agents[0].step(time_step).action
-                action1 = cur_agents[1].step(time_step).action
-
+                action0 = cur_agents[0].step(time_step, is_evaluation=True).action
+                action1 = cur_agents[1].step(time_step, is_evaluation=True).action
                 time_step = env.step([action0, action1])
             if time_step.rewards[player_pos] > 0:
                 wins[player_pos] += 1
-            for agent in cur_agents:
-                agent.step(time_step)
     return wins / num_episodes
 
 
@@ -97,17 +92,12 @@ def main(_):
             logging.info("Starting episode %s, win_rates %s", cur_episode, win_rates)
         time_step = env.reset()
         while not time_step.last():
-
             action0 = agents[0].step(time_step).action
             action1 = agents[1].step(time_step).action
-
             time_step = env.step([action0, action1])
-
         # Episode is over, step all agents with final info state.
         for agent in agents:
             agent.step(time_step)
-
-
 
 
 if __name__ == "__main__":

@@ -126,8 +126,8 @@ def  eval_against_each_other(env, agent0, agent1, num_episodes):
 def main(_):
     game = pyspiel.create_matrix_game("prisoners_dilemma", "Prisoners Dilemma",
                                ["Confess", "Silent"], ["Confess", "Silent"],
-                               [[-1, 0], [-10, -5]],
-                                [[-1, -10], [0, -5]])
+                               [[3, 0], [5, 1]],
+                                [[3, 5], [0, 1]])
 
     num_players = 2
 
