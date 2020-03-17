@@ -144,18 +144,16 @@ def main(_):
             logging.info("Starting episode %s, state_rate_self_play %s, state_rate_random %s", cur_episode, state_rate_self_play, state_rate_random)
         time_step = env.reset()
         while not time_step.last():
-            action0 = agents[0].step(time_step).action
-            action1 = agents[1].step(time_step).action
+            step_output0 = agents[0].step(time_step)
+            step_output1 = agents[1].step(time_step)
+            print("0",step_output0.probs)
+            print("1",step_output1.probs)
+            action0 = step_output0.action
+            action1 = step_output1.action
             time_step = env.step([action0, action1])
         # Episode is over, step all agents with final info state.
         for agent in agents:
             agent.step(time_step)
-
-# De output stelt kans dat speler 0 en 1 voor één van de states kiest, en dit tegen een tegenstander die random speelt.
-# 1. Voor prisoner's dilemma zie je dat speler 0 kiest voor states 3 en 4 (wat neerkomt op verraadt); speler 1 kiest voor states 2 en 4 (ook verraadt).
-# 2. Voor Matching Pennies kiezen beide spelers alle vier de states uniform.
-# 3.
-# 4.
 
 if __name__ == "__main__":
   app.run(main)

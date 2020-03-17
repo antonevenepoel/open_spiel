@@ -16,31 +16,6 @@ dyn_battle_of_the_sexes = dynamics.MultiPopulationDynamics(payoff_matrix_battle_
 dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_paper_scissors, dynamics.replicator)
 
 #############
-# Version 1 #
-#############
-
-# fig, ax = plt.subplots()
-# X,Y,U,V = visualization._eval_dynamics_2x2_grid(dyn_prisoners_dilemma,num_points=9)
-# ax.set_title("Prisoner's Dilemma")
-# ax.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
-# q = ax.quiver(X, Y, U, V)
-# plt.show()
-#
-# fig, ax = plt.subplots()
-# X,Y,U,V = visualization._eval_dynamics_2x2_grid(dyn_matching_pennies,num_points=9)
-# ax.set_title("Matching Pennies")
-# ax.set(xlabel="Player 1: Pr(Playing Head)",ylabel="Player 2: Pr(Playing Head)")
-# q = ax.quiver(X, Y, U, V)
-# plt.show()
-#
-# fig, ax = plt.subplots()
-# X,Y,U,V = visualization._eval_dynamics_2x2_grid(dyn_battle_of_the_sexes,num_points=9)
-# ax.set_title("Battle of the Sexes (Boxing v. Shopping)")
-# ax.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
-# q = ax.quiver(X, Y, U, V)
-# plt.show()
-
-#############
 # Version 2 #
 #############
 
