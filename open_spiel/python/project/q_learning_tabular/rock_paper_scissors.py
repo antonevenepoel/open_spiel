@@ -32,6 +32,7 @@ from absl import flags
 import numpy as np
 from six.moves import input
 from six.moves import range
+
 import pyspiel
 
 from open_spiel.python import rl_environment
@@ -47,68 +48,94 @@ flags.DEFINE_boolean(
 
 
 def pretty_board(time_step):
-
-  return
+  """Returns the board in `time_step` in a human readable format."""
+  info_state = time_step.observations["info_state"][0]
+  x_locations = np.nonzero(info_state[9:18])[0]
+  o_locations = np.nonzero(info_state[18:])[0]
+  board = np.full(3 * 3, ".")
+  board[x_locations] = "X"
+  board[o_locations] = "0"
+  board = np.reshape(board, (3, 3))
+  return board
 
 
 def command_line_action(time_step):
+  """Gets a valid action from the user on the command line."""
+  current_player = time_step.observations["current_player"]
+  legal_actions = time_step.observations["legal_actions"][current_player]
+  action = -1
+  while action not in legal_actions:
+    print("Choose an action from {}:".format(legal_actions))
+    sys.stdout.flush()
+    action_str = input()
+    try:
+      action = int(action_str)
+    except ValueError:
+      continue
+  return action
 
-  return
 
-
-def eval_against_random_bots(env, our_agent, other_agent, num_episodes):
-    """Evaluates our agant against another against that both are tr for `num_episodes`."""
+def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
+    """Evaluates `trained_agents` against `random_agents` for `num_episodes`."""
     wins = np.zeros(2)
-
+    cur_agents = trained_agents
     for _ in range(num_episodes):
         time_step = env.reset()
         while not time_step.last():
-            agent_output = [our_agent.step(time_step, is_evaluation=True), other_agent.step(time_step, is_evaluation= True)]
-            time_step = env.step([agent_output[0].action, agent_output[1].action])
-        if time_step.rewards[0] == 1:
-            wins[0] += 1
-        elif (time_step.rewards[1] == 1) :
-            wins[1] +=1
+            action0 = cur_agents[0].step(time_step, is_evaluation= True).action
+            action1 = cur_agents[1].step(time_step, is_evaluation= True).action
+            time_step = env.step([action0, action1])
+        print(time_step.rewards)
+        if time_step.rewards[0] > 0:
+            wins[0] +=1
+        else:
+            wins[1] += 1
 
 
+        for agent in cur_agents:
+            agent.step(time_step)
     return wins
 
 
 def main(_):
-    game = pyspiel.create_matrix_game("matching_pennies", "Matching Pennies",
-                               ["Heads", "Tails"], ["Heads", "Tails"],
-                               [[-1, 1], [1, -1]], [[1, -1], [-1, 1]])
+    game = pyspiel.create_matrix_game("prisoners_dilemma", "Prisoners Dilemma",
+                               ["Rock", "Paper", "Scissors"], ["Rock", "Paper", "Scissors"],
+                               [[0,-1, 1], [1, 0, -1], [-1,1,0]], [[0,1, -1], [-1, 0, 1], [1,-1,0]])
     num_players = 2
 
     env = rl_environment.Environment(game)
     num_actions = env.action_spec()["num_actions"]
 
-    our_agent = tabular_qlearner.QLearner(player_id=0, num_actions=num_actions)
-
+    agents = [
+        tabular_qlearner.QLearner(player_id=idx, num_actions=num_actions)
+        for idx in range(num_players)
+    ]
 
     # random agents for evaluation
-    other_agent = tabular_qlearner.QLearner(player_id=1, num_actions=num_actions)
-
+    random_agents = [
+        random_agent.RandomAgent(player_id=idx, num_actions=num_actions)
+        for idx in range(num_players)
+    ]
 
     # 1. Train the agents
     training_episodes = FLAGS.num_episodes
     for cur_episode in range(training_episodes):
         if cur_episode % int(1e4) == 0:
-            win_rates = eval_against_random_bots(env, our_agent, other_agent, 1000)
+            win_rates = eval_against_random_bots(env, agents, random_agents, 1000)
             logging.info("Starting episode %s, win_rates %s", cur_episode, win_rates)
         time_step = env.reset()
         while not time_step.last():
-            actionAgent1 = our_agent.step(time_step, is_evaluation=False)
-            actionAgent2 = other_agent.step(time_step, is_evaluation=False)
-            agent_output = [actionAgent1, actionAgent2]
-            time_step = env.step([agent_output[0].action, agent_output[1].action])
+
+            action0 = agents[0].step(time_step).action
+            action1 = agents[1].step(time_step).action
+
+            time_step = env.step([action0, action1])
+
+        # Episode is over, step all agents with final info state.
+        for agent in agents:
+            agent.step(time_step)
 
 
-    if not FLAGS.iteractive_play:
-        return
-
-
-  # 2. Play from the command line against the trained agent.
 
 
 if __name__ == "__main__":

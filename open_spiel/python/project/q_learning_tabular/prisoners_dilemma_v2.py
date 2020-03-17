@@ -41,7 +41,38 @@ from open_spiel.python.algorithms import tabular_qlearner
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_integer("num_episodes", int(5e4), "Number of train episodes.")
+flags.DEFINE_integer("num_episodes", int(1e1), "Number of train episodes.")
+flags.DEFINE_boolean(
+    "iteractive_play", True,
+    "Whether to run an interactive play with the agent after training.")
+
+
+def pretty_board(time_step):
+  """Returns the board in `time_step` in a human readable format."""
+  info_state = time_step.observations["info_state"][0]
+  x_locations = np.nonzero(info_state[9:18])[0]
+  o_locations = np.nonzero(info_state[18:])[0]
+  board = np.full(3 * 3, ".")
+  board[x_locations] = "X"
+  board[o_locations] = "0"
+  board = np.reshape(board, (3, 3))
+  return board
+
+
+def command_line_action(time_step):
+  """Gets a valid action from the user on the command line."""
+  current_player = time_step.observations["current_player"]
+  legal_actions = time_step.observations["legal_actions"][current_player]
+  action = -1
+  while action not in legal_actions:
+    print("Choose an action from {}:".format(legal_actions))
+    sys.stdout.flush()
+    action_str = input()
+    try:
+      action = int(action_str)
+    except ValueError:
+      continue
+  return action
 
 def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
     """Evaluates `trained_agents` against `random_agents` for `num_episodes`."""
@@ -50,10 +81,12 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
     for _ in range(num_episodes):
         time_step = env.reset()
         while not time_step.last():
-
-            action0 = cur_agents[0].step(time_step, is_evaluation=True).action
-            action1 = cur_agents[1].step(time_step, is_evaluation=True).action
+            action0 = cur_agents[0].step(time_step, is_evaluation= True).action
+            action1 = cur_agents[1].step(time_step, is_evaluation= True).action
             time_step = env.step([action0, action1])
+
+        # print(time_step.rewards)
+
         if time_step.rewards == [-1, -1]:
             wins[0] += 1
         elif (time_step.rewards == [0, -10]):
@@ -65,7 +98,8 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
 
         for agent in cur_agents:
             agent.step(time_step)
-    return wins
+
+    return wins / num_episodes
 
 def  eval_against_each_other(env, agent0, agent1, num_episodes):
     """Evaluates `trained_agents` against `random_agents` for `num_episodes`."""
@@ -108,6 +142,8 @@ def main(_):
         random_agent.RandomAgent(player_id=idx, num_actions=num_actions)
         for idx in range(num_players)
     ]
+
+
     # # 1. Train the agents
     # training_episodes = FLAGS.num_episodes
     # for cur_episode in range(training_episodes):
@@ -127,11 +163,9 @@ def main(_):
     #         agents[player_pos].step(time_step)
     #         random_agents[player_pos].step(time_step)
 
-
-
     for ep in range(10):
         for ep2 in range(1000):
-            #training
+            # training
             for pos in range(2):
                 time_step = env.reset()
                 while not time_step.last():
@@ -144,8 +178,6 @@ def main(_):
 
         win_rates = eval_against_each_other(env, agents[0],agents[1], 1000)
         logging.info("Starting episode %s, win_rates %s", ep, win_rates)
-
-
 
 if __name__ == "__main__":
   app.run(main)

@@ -33,7 +33,6 @@ def evaluate_agents(env, agents):
     while not time_step.last():
         actions = [agents[0].step(time_step, is_evaluation = True).action, agents[1].step(time_step, is_evaluation = True).action]
         time_step = env.step(actions)
-
     agents[0].step(time_step, is_evaluation = True)
     agents[1].step(time_step, is_evaluation = True)
     return time_step.rewards
