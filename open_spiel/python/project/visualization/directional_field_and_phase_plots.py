@@ -8,7 +8,7 @@ from open_spiel.python.egt import visualization
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
 payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
 payoff_matrix_battle_of_the_sexes = np.array([[[2,0],[0,1]],[[1,0],[0,2]]])
-payoff_matrix_rock_paper_scissors = np.array([[[0,-1,1],[1,0,-1],[-1,1,0]],[[0,1,-1],[-1,0,1],[1,-1,0]]])
+payoff_matrix_rock_paper_scissors = np.array([[[0.0, -0.25, 0.5], [0.25, 0.0, -0.05], [-0.5, 0.05, 0.0]],[[0.0, 0.25, -0.5], [-0.25, 0.0, 0.05], [0.5, -0.05, 0.0]]])
 
 dyn_prisoners_dilemma = dynamics.MultiPopulationDynamics(payoff_matrix_prisoners_dilemma, [dynamics.replicator] * 2)
 dyn_matching_pennies = dynamics.MultiPopulationDynamics(payoff_matrix_matching_pennies, [dynamics.replicator] * 2)
@@ -90,9 +90,9 @@ fig1 = plt.figure(figsize=(10,10))
 
 ax = fig1.add_subplot(121, projection="3x3")
 ax.quiver(dyn_rock_paper_scissors, boundary=True)
-ax.set_title("Rock, Paper, Scissors", fontweight="bold")
+ax.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
 ax1 = fig1.add_subplot(122, projection="3x3")
 ax1.streamplot(dyn_rock_paper_scissors, color="velocity", linewidth="velocity")
-ax1.set_title("Rock, Paper, Scissors", fontweight="bold")
+ax1.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
 
 plt.show()
