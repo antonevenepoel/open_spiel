@@ -74,7 +74,6 @@ def command_line_action(time_step):
       continue
   return action
 
-
 def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
     """Evaluates `trained_agents` against `random_agents` for `num_episodes`."""
     wins = np.zeros(4)
@@ -90,9 +89,9 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
 
         if time_step.rewards == [-1, -1]:
             wins[0] += 1
-        elif (time_step.rewards == [1, -10]):
+        elif (time_step.rewards == [0, -10]):
             wins[1] += 1
-        elif (time_step.rewards == [-10, 1]):
+        elif (time_step.rewards == [-10, 0]):
             wins[2] += 1
         elif (time_step.rewards == [-5, -5]):
             wins[3] += 1
@@ -102,47 +101,83 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
 
     return wins / num_episodes
 
+def  eval_against_each_other(env, agent0, agent1, num_episodes):
+    """Evaluates `trained_agents` against `random_agents` for `num_episodes`."""
+    wins = np.zeros(4)
+    for _ in range(num_episodes):
+        time_step = env.reset()
+        while not time_step.last():
+            action0 = agent0.step(time_step, is_evaluation=True).action
+            action1 = agent1.step(time_step, is_evaluation=True).action
+            time_step = env.step([action0, action1])
+        agent0.step(time_step)
+        agent1.step(time_step)
+        if time_step.rewards == [-1, -1]:
+            wins[0] += 1
+        elif (time_step.rewards == [0, -10]):
+            wins[1] += 1
+        elif (time_step.rewards == [-10, 0]):
+            wins[2] += 1
+        elif (time_step.rewards == [-5, -5]):
+            wins[3] += 1
+    return wins
+
 
 def main(_):
     game = pyspiel.create_matrix_game("prisoners_dilemma", "Prisoners Dilemma",
                                ["Confess", "Silent"], ["Confess", "Silent"],
-                               [[-1, 1], [-10, -5]], [[-1, -10], [1, -5]])
+                               [[-1, 0], [-10, -5]],
+                                [[-1, -10], [0, -5]])
+
     num_players = 2
 
     env = rl_environment.Environment(game)
     num_actions = env.action_spec()["num_actions"]
-
     agents = [
-        tabular_qlearner.QLearner(player_id=idx, num_actions=num_actions)
+        tabular_qlearner.QLearner(player_id=idx, num_actions=num_actions, step_size=0.5, epsilon=0.2, discount_factor=1.0)
         for idx in range(num_players)
     ]
-
     # random agents for evaluation
     random_agents = [
         random_agent.RandomAgent(player_id=idx, num_actions=num_actions)
         for idx in range(num_players)
     ]
 
-    # 1. Train the agents
-    training_episodes = FLAGS.num_episodes
-    for cur_episode in range(training_episodes):
-        if cur_episode % int(1e0) == 0:
-            win_rates = eval_against_random_bots(env, agents, random_agents, 1000)
-            logging.info("Starting episode %s, win_rates %s", cur_episode, win_rates)
-        time_step = env.reset()
-        while not time_step.last():
 
-            action0 = agents[0].step(time_step).action
-            action1 = agents[1].step(time_step).action
+    # # 1. Train the agents
+    # training_episodes = FLAGS.num_episodes
+    # for cur_episode in range(training_episodes):
+    #     if cur_episode % int(1e4) == 0:
+    #         win_rates = eval_against_random_bots(env, agents, random_agents, 1000)
+    #         logging.info("Starting episode %s, win_rates %s", cur_episode, win_rates)
+    #     for player_pos in range(2):
+    #         time_step = env.reset()
+    #         while not time_step.last():
+    #
+    #             action0 = agents[player_pos].step(time_step).action
+    #
+    #             action1 = random_agents[0].step(time_step).action
+    #
+    #             time_step = env.step([action0, action1])
+    #
+    #         agents[player_pos].step(time_step)
+    #         random_agents[player_pos].step(time_step)
 
-            time_step = env.step([action0, action1])
+    for ep in range(10):
+        for ep2 in range(1000):
+            # training
+            for pos in range(2):
+                time_step = env.reset()
+                while not time_step.last():
+                    action0 = agents[pos].step(time_step).action
+                    action1 = random_agents[pos].step(time_step).action
+                    actionList= [action0, action1]
+                    time_step = env.step(actionList)
+                agents[pos].step(time_step)
+                random_agents[pos].step(time_step)
 
-        # Episode is over, step all agents with final info state.
-        for agent in agents:
-            agent.step(time_step)
-
-
-
+        win_rates = eval_against_each_other(env, agents[0],agents[1], 1000)
+        logging.info("Starting episode %s, win_rates %s", ep, win_rates)
 
 if __name__ == "__main__":
   app.run(main)
