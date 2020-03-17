@@ -34,26 +34,26 @@ def evaluate_agents(env, agents):
     return time_step.rewards
 
 def create_game():
-    return pyspiel.create_matrix_game("prisoners_dilemma", "Prisoners Dilemma",
-                               ["coordinate", "betray"], ["coordinate", "betray"],
-                               [[3,0],[5,1]], [[3,5],[0,1]])
+    return pyspiel.create_matrix_game("battle_of_sexes", "The Battle of The Sexes",
+                               ["LW", "WL"], ["LW", "WL"],
+                               [[2, 0], [0, 1]], [[1, 0], [0, 2]])
 def create_environment(game):
     return rl_environment.Environment(game)
 
 
 
 def execute_scenarios(env, nb):
-    sumScenario1 = np.zeros(4)
+    sumScenario1 = np.zeros(3)
     for _ in range(nb):
         rewardCounter(sumScenario1 , scenario1(env))
     logging.info("The results of scenario 1 are: %s", sumScenario1)
 
-    sumScenario2 = np.zeros(4)
+    sumScenario2 = np.zeros(3)
     for _ in range(nb):
         rewardCounter(sumScenario2, scenario2(env))
     logging.info("The results of scenario 2 are: %s", sumScenario2)
 
-    sumScenario3 = np.zeros(4)
+    sumScenario3 = np.zeros(3)
     for _ in range(nb):
         rewardCounter(sumScenario3, scenario3(env))
     logging.info("The results of scenario 2 are: %s", sumScenario3)
@@ -102,15 +102,13 @@ def scenario3(env):
 
 
 def rewardCounter(totalSum, reward):
-    payOffMatrix = [[3,3],[0,5]], [[5,0],[1,1]]
-    if reward == payOffMatrix[0][0]:
+    if reward == [0,0]:
         totalSum[0] +=1
-    elif reward == payOffMatrix[0][1]:
+    elif reward == [2,1]:
         totalSum[1] +=1
-    elif reward == payOffMatrix[1][0]:
+    elif reward == [1,2]:
         totalSum[2] +=1
-    elif reward == payOffMatrix[1][1]:
-        totalSum[3] +=1
+
 
 
 

@@ -34,29 +34,20 @@ def evaluate_agents(env, agents):
     return time_step.rewards
 
 def create_game():
-    return pyspiel.create_matrix_game("prisoners_dilemma", "Prisoners Dilemma",
-                               ["coordinate", "betray"], ["coordinate", "betray"],
-                               [[3,0],[5,1]], [[3,5],[0,1]])
+    return pyspiel.create_matrix_game("matching_pennies", "Matching Pennies",
+                                      ["Heads", "Tails"], ["Heads", "Tails"],
+                                      [[-1, 1], [1, -1]], [[1, -1], [-1, 1]])
 def create_environment(game):
     return rl_environment.Environment(game)
 
 
 
 def execute_scenarios(env, nb):
-    sumScenario1 = np.zeros(4)
+    sumScenario1 = np.zeros(2)
     for _ in range(nb):
         rewardCounter(sumScenario1 , scenario1(env))
     logging.info("The results of scenario 1 are: %s", sumScenario1)
 
-    sumScenario2 = np.zeros(4)
-    for _ in range(nb):
-        rewardCounter(sumScenario2, scenario2(env))
-    logging.info("The results of scenario 2 are: %s", sumScenario2)
-
-    sumScenario3 = np.zeros(4)
-    for _ in range(nb):
-        rewardCounter(sumScenario3, scenario3(env))
-    logging.info("The results of scenario 2 are: %s", sumScenario3)
 
 
 """
@@ -76,41 +67,15 @@ def scenario1(env):
 
     return evaluate_agents(env, agents)
 
-"""
-Scenario 2: 2 agents are trained with tabular_Q_learning against each other and evaluated against each other.
-"""
-def scenario2(env):
-    agents = [
-        tabular_qlearner.QLearner(player_id=idx, num_actions=env.num_actions_per_step, step_size=0.5, epsilon=0.2, discount_factor=1.0 )
-        for idx in range(env.num_players)
-    ]
-    train_agents(env, agents, 1000)
-    return evaluate_agents(env, agents)
-
-"""
-Scenario 3: 2 random against play against each other.
-"""
-
-def scenario3(env):
-    random_agents = [
-        random_agent.RandomAgent(player_id=idx, num_actions=env.num_actions_per_step, )
-        for idx in range(env.num_players)
-    ]
-
-    return evaluate_agents(env, random_agents)
 
 
 
 def rewardCounter(totalSum, reward):
-    payOffMatrix = [[3,3],[0,5]], [[5,0],[1,1]]
-    if reward == payOffMatrix[0][0]:
+    if reward == [1.0, -1.0]:
         totalSum[0] +=1
-    elif reward == payOffMatrix[0][1]:
+    elif reward == [-1.0, 1.0]:
         totalSum[1] +=1
-    elif reward == payOffMatrix[1][0]:
-        totalSum[2] +=1
-    elif reward == payOffMatrix[1][1]:
-        totalSum[3] +=1
+
 
 
 
@@ -118,7 +83,7 @@ def main(_):
     game = create_game()
     env = create_environment(game)
     print(env.is_turn_based)
-    execute_scenarios(env, 10)
+    execute_scenarios(env, 100)
 
 
 if __name__ == "__main__":
