@@ -41,7 +41,7 @@ from open_spiel.python.algorithms import tabular_qlearner
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_integer("num_episodes", int(5e4), "Number of train episodes.")
+flags.DEFINE_integer("num_episodes", int(1e1), "Number of train episodes.")
 flags.DEFINE_boolean(
     "iteractive_play", True,
     "Whether to run an interactive play with the agent after training.")
@@ -81,14 +81,13 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
     cur_agents = trained_agents
     for _ in range(num_episodes):
         time_step = env.reset()
-
-
         while not time_step.last():
             action0 = cur_agents[0].step(time_step, is_evaluation= True).action
             action1 = cur_agents[1].step(time_step, is_evaluation= True).action
-
             time_step = env.step([action0, action1])
-        print(time_step.rewards)
+
+        # print(time_step.rewards)
+
         if time_step.rewards == [-1, -1]:
             wins[0] += 1
         elif (time_step.rewards == [1, -10]):
@@ -100,7 +99,8 @@ def eval_against_random_bots(env, trained_agents, random_agents, num_episodes):
 
         for agent in cur_agents:
             agent.step(time_step)
-    return wins
+
+    return wins / num_episodes
 
 
 def main(_):
@@ -126,7 +126,7 @@ def main(_):
     # 1. Train the agents
     training_episodes = FLAGS.num_episodes
     for cur_episode in range(training_episodes):
-        if cur_episode % int(1e4) == 0:
+        if cur_episode % int(1e0) == 0:
             win_rates = eval_against_random_bots(env, agents, random_agents, 1000)
             logging.info("Starting episode %s, win_rates %s", cur_episode, win_rates)
         time_step = env.reset()

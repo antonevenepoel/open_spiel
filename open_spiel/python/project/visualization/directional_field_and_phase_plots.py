@@ -44,7 +44,12 @@ dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_p
 # Version 2 #
 #############
 
+# Quiver = directional field plot
+# Streamplot = phase plot
+
+#####
 # 2x2: Prisoner's Dilemma, Matching Pennies, Battle of the Sexes (Population of 2)
+#####
 
 fig = plt.figure(figsize=(10,10))
 
@@ -75,7 +80,9 @@ ax3a.streamplot(dyn_battle_of_the_sexes, color="velocity", linewidth="velocity")
 ax3a.set_title("Battle of the Sexes", fontweight="bold")
 ax3a.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
 
+#####
 # 3x3: Rock, Paper, Scissors (Single population)
+#####
 
 # TODO: Labels of Rock, Paper and Scissor
 
@@ -84,7 +91,6 @@ fig1 = plt.figure(figsize=(10,10))
 ax = fig1.add_subplot(121, projection="3x3")
 ax.quiver(dyn_rock_paper_scissors, boundary=True)
 ax.set_title("Rock, Paper, Scissors", fontweight="bold")
-ax.set(xlabel="Rock",ylabel="Paper")
 ax1 = fig1.add_subplot(122, projection="3x3")
 ax1.streamplot(dyn_rock_paper_scissors, color="velocity", linewidth="velocity")
 ax1.set_title("Rock, Paper, Scissors", fontweight="bold")
