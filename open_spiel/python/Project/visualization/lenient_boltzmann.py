@@ -1,11 +1,10 @@
 
 import numpy as np
 from open_spiel.python.egt import dynamics
+
 def utilities_vector(payOff, stateX, stateY, K):
     size = stateX.shape[0]
-
     utilities = np.zeros(size)
-
     for i in range(size):
         for j in range(size-1):
             utilities[i] += payOff[i,j]*stateY[j]*(collector1(i,j,size, stateY,payOff)**K - collector2(i,j,size, stateY,payOff)**K)/collector3(i,j,size, stateY,payOff)

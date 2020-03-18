@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
+from open_spiel.python.project.visualization.qlearning_probs_v2 import calculate_probs
 
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
 payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
@@ -14,6 +15,16 @@ dyn_prisoners_dilemma = dynamics.MultiPopulationDynamics(payoff_matrix_prisoners
 dyn_matching_pennies = dynamics.MultiPopulationDynamics(payoff_matrix_matching_pennies, [dynamics.replicator] * 2)
 dyn_battle_of_the_sexes = dynamics.MultiPopulationDynamics(payoff_matrix_battle_of_the_sexes, [dynamics.replicator] * 2)
 dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_paper_scissors, dynamics.replicator)
+
+probs_prisonners_dilemma = calculate_probs("prisoner's dilemma")
+probs_matching_pennies = calculate_probs("matching pennies")
+probs_battle_of_the_sexes = calculate_probs("battle of the sexes")
+probs_biased_rps = calculate_probs("biased rock, paper, scissors")
+
+# Opmaak voor de trace plots
+color = "black"
+marker = "D"
+linestyle = "dashed"
 
 #############
 # Version 2 #
@@ -32,6 +43,7 @@ ax1 = fig.add_subplot(231, projection="2x2")
 ax1.quiver(dyn_prisoners_dilemma)
 ax1.set_title("Prisoner's Dilemma", fontweight="bold")
 ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
+ax1.plot(probs_prisonners_dilemma, color=color, marker=marker, linestyle=linestyle)
 ax1a = fig.add_subplot(234, projection="2x2")
 ax1a.streamplot(dyn_prisoners_dilemma, color="velocity", linewidth="velocity")
 ax1a.set_title("Prisoner's Dilemma", fontweight="bold")
@@ -41,6 +53,7 @@ ax2 = fig.add_subplot(232, projection="2x2")
 ax2.quiver(dyn_matching_pennies)
 ax2.set_title("Matching Pennies", fontweight="bold")
 ax2.set(xlabel="Player 1: Pr(Playing Head)",ylabel="Player 2: Pr(Playing Head)")
+ax2.plot(probs_matching_pennies, color=color, marker=marker, linestyle=linestyle)
 ax2a = fig.add_subplot(235, projection="2x2")
 ax2a.streamplot(dyn_matching_pennies, color="velocity", linewidth="velocity")
 ax2a.set_title("Matching Pennies", fontweight="bold")
@@ -50,6 +63,7 @@ ax3 = fig.add_subplot(233, projection="2x2")
 ax3.quiver(dyn_battle_of_the_sexes)
 ax3.set_title("Battle of the Sexes", fontweight="bold")
 ax3.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
+ax3.plot(probs_battle_of_the_sexes, color=color, marker=marker, linestyle=linestyle)
 ax3a = fig.add_subplot(236, projection="2x2")
 ax3a.streamplot(dyn_battle_of_the_sexes, color="velocity", linewidth="velocity")
 ax3a.set_title("Battle of the Sexes", fontweight="bold")
@@ -66,8 +80,11 @@ fig1 = plt.figure(figsize=(10,10))
 ax = fig1.add_subplot(121, projection="3x3")
 ax.quiver(dyn_rock_paper_scissors, boundary=True)
 ax.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
+ax.set_labels(["Rock", "Paper", "Scissors"])
+ax.plot(probs_biased_rps, color=color, marker=marker)
 ax1 = fig1.add_subplot(122, projection="3x3")
 ax1.streamplot(dyn_rock_paper_scissors, color="velocity", linewidth="velocity")
 ax1.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
+ax1.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()

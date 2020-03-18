@@ -124,10 +124,16 @@ def main(_):
     num_actions = env.action_spec()["num_actions"]
     num_players = 2
 
-    agents = [
+    agents1 = [
         tabular_qlearner.QLearner(player_id=idx, num_actions=num_actions)
         for idx in range(num_players)
     ]
+
+    agent2 = [
+
+    ]
+
+    agents = agents1
 
     # random agents for evaluation
     random_agents = [
@@ -139,15 +145,14 @@ def main(_):
     training_episodes = FLAGS.num_episodes
     for cur_episode in range(training_episodes):
         if cur_episode % int(1e4) == 0:
-            state_rate_self_play = eval_two_agents(env, agents[0], agents[1], 1000, int(game_number))
-            state_rate_random = eval_two_agents(env, agents[0], random_agents[1], 1000, int(game_number))
+            state_rate_self_play = eval_two_agents(env, agents[0], agents[1], 10000, int(game_number))
+            state_rate_random = eval_two_agents(env, agents[0], random_agents[1], 10000, int(game_number))
             logging.info("Starting episode %s, state_rate_self_play %s, state_rate_random %s", cur_episode, state_rate_self_play, state_rate_random)
         time_step = env.reset()
+        # print(time_step)
         while not time_step.last():
             step_output0 = agents[0].step(time_step)
             step_output1 = agents[1].step(time_step)
-            print("0",step_output0.probs)
-            print("1",step_output1.probs)
             action0 = step_output0.action
             action1 = step_output1.action
             time_step = env.step([action0, action1])

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
+from open_spiel.python.project.visualization.trace_plots import calculate_probs
 
 # True for field plot, False for phase plot
 PLOT_FLAG = False
@@ -49,5 +50,6 @@ for i, T in zip(range(6),reversed([0.000001,0.05,0.1,0.25,1,10])):
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="3x3")
     ax1.quiver(dyn_rock_paper_scissors) # if PLOT_FLAG else ax1.streamplot(dyn_rock_paper_scissors,linewidth="velocity", color="velocity")
     ax1.set_title("Biased RPS, \u03C4={}".format(round(T,2)), fontweight="bold")
+    ax1.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()

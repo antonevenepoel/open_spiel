@@ -115,6 +115,17 @@ class Dynamics2x2Axes(axes.Axes):
     self.set_xlim(0, 1)
     self.set_ylim(0, 1)
 
+  def plot(self, points, **kwargs):
+    """Creates a line plot.
+
+    Args:
+      points: Points in policy space.
+      **kwargs: Additional keyword arguments passed on to `Axes.plot`.
+    """
+    points = np.array(points)
+    assert points.shape[1] == 2
+    return super(Dynamics2x2Axes, self).plot(points[:, 0], points[:, 1], **kwargs)
+
   def quiver(self,
              dynamics,
              num_points=9,
