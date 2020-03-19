@@ -1,83 +1,48 @@
-# Copyright 2019 DeepMind Technologies Ltd. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Continuous-time population dynamics."""
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
+"""
+This module is an extension of the dynamics module available in open_spiel/python/egt.
+"""
 import numpy as np
+from open_spiel.python.egt import dynamics
 
 
-def replicator(state, fitness):
-  """Continuous-time replicator dynamics.
 
-  This is the standard form of the continuous-time replicator dynamics also
-  known as selection dynamics.
+def utilities_vector(payOff, stateX, stateY, K):
+    size = stateX.shape[0]
 
-  For more details, see equation (5) page 9 in
-  https://jair.org/index.php/jair/article/view/10952
+    utilities = np.zeros(size)
 
-  Args:
-    state: Probability distribution as an `np.array(shape=num_strategies)`.
-    fitness: Fitness vector as an `np.array(shape=num_strategies)`.
-
-  Returns:
-    Time derivative of the population state.
-  """
-  avg_fitness = state.dot(fitness)
-  return state * (fitness - avg_fitness)
+    for i in range(size):
+        for j in range(size):
+            utilities[i] += payOff[i,j]*stateY[j]*(collector1(i,j,size, stateY,payOff)**K - collector2(i,j,size, stateY,payOff)**K)/collector3(i,j,size, stateY,payOff)
+    return utilities
 
 
-def boltzmannq(state, fitness, temperature=1.):
-  """Selection-mutation dynamics modeling Q-learning with Boltzmann exploration.
+def collector1(i, j, size, stateY, payOff):
+    reward = 0
+    for k in range(size):
+        if payOff[i,k] <= payOff[i,j]:
+            reward +=stateY[k]
+    return reward
 
-  For more details, see equation (10) page 15 in
-  https://jair.org/index.php/jair/article/view/10952
+def collector2(i, j, size, stateY, payOff):
+    reward = 0
+    for k in range(size):
+        if payOff[i,k] < payOff[i,j]:
+            reward +=stateY[k]
+    return reward
 
-  Args:
-    state: Probability distribution as an `np.array(shape=num_strategies)`.
-    fitness: Fitness vector as an `np.array(shape=num_strategies)`.
-    temperature: A scalar parameter determining the rate of exploration.
+def collector3(i, j, size, stateY, payOff):
+    reward = 0
+    for k in range(size):
+        if payOff[i,k] == payOff[i,j]:
+            reward +=stateY[k]
+    return reward
 
-  Returns:
-    Time derivative of the population state.
-  """
-  exploitation = (1. / temperature) * replicator(state, fitness)
-  exploration = (np.log(state) - state.dot(np.log(state).transpose()))
-  return exploitation - state * exploration
+def lenient_boltzmann(payOff, stateX, stateY, K, temperature):
+    fitness = utilities_vector(payOff, stateX, stateY, K)
+    return dynamics.boltzmannq(stateX, fitness, temperature)
 
-
-def qpg(state, fitness):
-  """Q-based policy gradient dynamics (QPG).
-
-  For more details, see equation (12) on page 18 in
-  https://arxiv.org/pdf/1810.09026.pdf
-
-  Args:
-    state: Probability distribution as an `np.array(shape=num_strategies)`.
-    fitness: Fitness vector as an `np.array(shape=num_strategies)`.
-
-  Returns:
-    Time derivative of the population state.
-  """
-  regret = fitness - state.dot(fitness)
-  return state * (state * regret - np.sum(state**2 * regret))
-
-
-class SinglePopulationDynamics(object):
+class SinglePopulationDynamicsLB(object):
   """Continuous-time single population dynamics.
 
   Attributes:
@@ -116,10 +81,10 @@ class SinglePopulationDynamics(object):
     assert state.shape[0] == self.payoff_matrix.shape[0]
     # (Ax')' = xA'
     fitness = np.matmul(state, self.payoff_matrix.T)
-    return self.dynamics(state, fitness)
+    return self.dynamics(self.payoff_matrix , state, state)
 
 
-class MultiPopulationDynamics(object):
+class MultiPopulationDynamicsLB(object):
   """Continuous-time multi-population dynamics.
 
   Attributes:
@@ -157,35 +122,35 @@ class MultiPopulationDynamics(object):
       Time derivative of the combined population state as `numpy.ndarray`.
     """
     state = np.array(state)
+    # cumsum: Return the cumulative sum of the elements along a given axis.
     n = self.payoff_tensor.shape[0]  # number of players
     ks = self.payoff_tensor.shape[1:]  # number of strategies for each player
     assert state.shape[0] == sum(ks)
 
-    states = np.split(state, np.cumsum(ks)[:-1])
+    states = np.split(state, np.cumsum(ks)[:-1]) #Split the state in an array of states for each player.
     dstates = [None] * n
     for i in range(n):
       # move i-th population to front
-
-      fitness = np.moveaxis(self.payoff_tensor[i], i, 0)
+      payOff = np.moveaxis(self.payoff_tensor[i], i, 0) #Choose the payoff matrix of player i
       # marginalize out all other populations
       for i_ in set(range(n)) - {i}:
-        fitness = np.tensordot(states[i_], fitness, axes=[0, 1])
-      dstates[i] = self.dynamics[i](states[i], fitness)
+        other_state = states[i_]
+      dstates[i] = self.dynamics[i](payOff, states[i], other_state)
 
     return np.concatenate(dstates)
 
 
-def time_average(traj):
-  """Time-averaged population state trajectory.
 
-  Args:
-    traj: Trajectory as `numpy.ndarray`. Time is along the first dimension,
-      types/strategies along the second.
 
-  Returns:
-    Time-averaged trajectory.
-  """
-  n = traj.shape[0]
-  sum_traj = np.cumsum(traj, axis=0)
-  norm = 1. / np.arange(1, n + 1)
-  return sum_traj * norm[:, np.newaxis]
+# TEST
+# payOff = np.array([[3,0],[5,1]])
+# X = np.array([0.5, 0.5])
+# Y = np.array([0.8, 0.2])
+#
+# print(lenient_boltzmann(payOff, X, Y, 3))
+
+#
+# payOff = np.array([[11,-30, 0],[-30,7,6],[0,0,5]])
+# X = np.array([0.3333333, 0.33333, 0.3333])
+# Y = np.array([0.3333, 0.3333, 0.33333])
+# print(utilities_vector(payOff, X, Y, 2))
