@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
-from open_spiel.python.project.visualization.trace_plots import calculate_probs
+from open_spiel.python.project.visualization.qlearning_probs_v1 import calculate_probs
 
 # True for field plot, False for phase plot
 PLOT_FLAG = False
@@ -18,7 +18,7 @@ payoff_matrix_rock_paper_scissors = np.array([[[0.0, -0.25, 0.5], [0.25, 0.0, -0
 
 # Prisoner's Dilemma
 fig = plt.figure(figsize=(10,10))
-for i, T in zip(range(6),reversed([0.000001,1,2,3,4,100])):
+for i, T in zip(range(6),reversed([0.000001,1,2,3,4,1000])):
     dyn_prisoners_dilemma = dynamics.MultiPopulationDynamics(payoff_matrix_prisoners_dilemma, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="2x2")
     ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color="velocity")
@@ -27,7 +27,7 @@ for i, T in zip(range(6),reversed([0.000001,1,2,3,4,100])):
 
 # Matching Pennies
 fig = plt.figure(figsize=(10,10))
-for i, T in zip(range(6),reversed([0.000001,0.1,0.5,1,2,5])):
+for i, T in zip(range(6),reversed([0.000001,0.1,0.5,1,2,1000])):
     dyn_matching_pennies = dynamics.MultiPopulationDynamics(payoff_matrix_matching_pennies, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="2x2")
     ax1.quiver(dyn_matching_pennies) if PLOT_FLAG else ax1.streamplot(dyn_matching_pennies,linewidth="velocity", color="velocity")
@@ -36,7 +36,7 @@ for i, T in zip(range(6),reversed([0.000001,0.1,0.5,1,2,5])):
 
 # Battle of the sexes
 fig = plt.figure(figsize=(10,10))
-for i, T in zip(range(6),reversed([0.000001,0.5,0.75,1,2,100])):
+for i, T in zip(range(6),reversed([0.000001,0.5,0.75,1,2,1000])):
     dyn_battle_of_the_sexes = dynamics.MultiPopulationDynamics(payoff_matrix_battle_of_the_sexes, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="2x2")
     ax1.quiver(dyn_battle_of_the_sexes) if PLOT_FLAG else ax1.streamplot(dyn_battle_of_the_sexes,linewidth="velocity", color="velocity")
@@ -45,7 +45,7 @@ for i, T in zip(range(6),reversed([0.000001,0.5,0.75,1,2,100])):
 
 # Biased rock, paper, scissors
 fig = plt.figure(figsize=(10,10))
-for i, T in zip(range(6),reversed([0.000001,0.05,0.1,0.25,1,10])):
+for i, T in zip(range(6),reversed([0.000001,0.05,0.1,0.25,1,1000])):
     dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_paper_scissors, partial(dynamics.boltzmannq,temperature=T))
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="3x3")
     ax1.quiver(dyn_rock_paper_scissors) # if PLOT_FLAG else ax1.streamplot(dyn_rock_paper_scissors,linewidth="velocity", color="velocity")
