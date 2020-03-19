@@ -17,7 +17,7 @@ payoff_matrix_rock_paper_scissors = np.array([[[0.0, -0.25, 0.5], [0.25, 0.0, -0
 
 # Prisoner's Dilemma
 fig = plt.figure(figsize=(10,10))
-for i, T in zip(range(6),reversed([0.000001,1,2,3,4,100])):
+for i, T in zip(range(6),reversed([0.01,0.05,0.1,0.2,0.3,0.4])):
     dyn_prisoners_dilemma = dynamics.MultiPopulationDynamics(payoff_matrix_prisoners_dilemma, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="2x2")
     ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color="velocity")
