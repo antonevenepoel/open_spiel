@@ -14,12 +14,12 @@ class CrossLearner(rl_agent.AbstractAgent):
                  player_id,
                  num_actions,
                  step_size=0.5,
-                 probs = [0.5, 0.5]):
+                 ):
         """Initialize the Q-Learning agent."""
         self._player_id = player_id
         self._num_actions = num_actions
         self._step_size = step_size
-        self._probs = probs
+        self._probs = [1/num_actions for i in range(num_actions)]
         self.prev_action = None
 
 
@@ -32,18 +32,13 @@ class CrossLearner(rl_agent.AbstractAgent):
 
         if self.prev_action != None:
             reward = time_step.rewards[self._player_id]
-            self._probs= self.update_prob(reward)
+            self.update_prob(reward)
             self.prev_action = None
         self.prev_action = action
         return rl_agent.StepOutput(action=action, probs=probs)
 
     def update_prob(self, reward):
         action = self.prev_action
-        if action == 0:
-            prob0 = self._probs[0] + self._step_size*(reward - self._probs[0]*reward)
-            prob1 = self._probs[1] - self._step_size*self._probs[1]*reward
-        else:
-            prob1 = self._probs[1] + self._step_size*(reward - self._probs[1]*reward)
-            prob0 = self._probs[0] - self._step_size*self._probs[0]*reward
-
-        return [prob0, prob1]
+        self._probs[action] += self._step_size*(reward - self._probs[action]*reward)
+        for i in set(range(self._num_actions)) - {action}:
+            self._probs[i] -= self._step_size * self._probs[i] * reward

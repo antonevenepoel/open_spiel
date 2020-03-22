@@ -15,7 +15,7 @@ from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
 
 ACCURACY = 1
-ITERATIONS = 10000
+ITERATIONS = 30000
 
 def train_agents(env, agents, nbep, i):
     prob_array = []
@@ -58,7 +58,25 @@ def train_agents_simultaneous(env, agents, nbep):
     prob_array.append(prob_array_agent_2)
     return prob_array
 
-#        print(time_step.rewards)
+def train_agents_simultaneous_single(env, agents, nbep):
+    prob_array = []
+
+    for ep in range(nbep):
+        time_step = env.reset()
+        while not time_step.last():
+            output0 = agents[0].step(time_step)
+            output1 = agents[1].step(time_step)
+            prob_array.append([output0.probs[0], output0.probs[1], output0.probs[2]])
+
+            actions = [output0.action, output1.action]
+            time_step = env.step(actions)
+        # Episode is over, step all agents with final info state.
+        agents[0].step(time_step)
+        agents[1].step(time_step)
+    return prob_array
+
+
+#  print(time_step.rewards)
 def evaluate_agents(env, agents):
     time_step = env.reset()
     while not time_step.last():
@@ -77,11 +95,11 @@ def create_game(name):
     elif name == "MP":
         return pyspiel.create_matrix_game("matching_pennies", "Matching Pennies",
                                           ["Heads", "Tails"], ["Heads", "Tails"],
-                                          [[-1, 1], [1, -1]], [[1, -1], [-1, 1]])
+                                          [[0, 1], [1, 0]], [[1, 0], [0, 1]])
     elif name == "RPS":
         return pyspiel.create_matrix_game(
-            [[0.0, -0.25, 0.5], [0.25, 0.0, -0.05], [-0.5, 0.05, 0.0]],
-            [[0.0, 0.25, -0.5], [-0.25, 0.0, 0.05], [0.5, -0.05, 0.0]])
+            [[0.5, 0.25, 1], [0.75, 0.5, 0.45], [0, 0.55, 0.5]],
+            [[0.5, 0.75, 0], [0.25, 0.5, 0.55], [1, 0.45, 0.5]])
 
 def create_environment(game):
     return rl_environment.Environment(game)
@@ -100,12 +118,10 @@ def execute_scenarios_probs(env, nb, start, sc):
         random_agent.RandomAgent(player_id=0, num_actions=env.num_actions_per_step, )
 
     ]
-    cross_agents = [
-        cross_learner.CrossLearner(player_id=0, num_actions=env.num_actions_per_step, step_size=0.001, probs=[start[0], 1-start[0]]),
-        cross_learner.CrossLearner(player_id=1, num_actions=env.num_actions_per_step, step_size=0.001, probs=[start[1], 1- start[1]])
-    ]
+
     agents[0]._q_values['[0.0]'][0] = start[0]
     agents[1]._q_values['[0.0]'][0] = start[1]
+
     if sc == 0:
         list = []
         list.append(train_agents(env, [agents[0], random_agents[0]], nb, 0))
@@ -113,8 +129,22 @@ def execute_scenarios_probs(env, nb, start, sc):
         return list
     elif sc ==1:
         return train_agents_simultaneous(env, agents, nb)
-    else:
+    elif sc ==2:
+        cross_agents = [
+            cross_learner.CrossLearner(player_id=0, num_actions=env.num_actions_per_step, step_size=0.001),
+            cross_learner.CrossLearner(player_id=1, num_actions=env.num_actions_per_step, step_size=0.001)
+        ]
+        cross_agents[0]._probs = [start[0], 1 - start[0]]
+        cross_agents[1]._probs = [start[1], 1 - start[1]]
         return train_agents_simultaneous(env, cross_agents, nb)
+    else:
+        cross_agents = [
+            cross_learner.CrossLearner(player_id=0, num_actions=3, step_size=0.001),
+            cross_learner.CrossLearner(player_id=1, num_actions=3, step_size=0.001)
+        ]
+        cross_agents[0]._probs = [start[0][0], start[0][1], 1-start[0][0]-start[0][1]]
+        cross_agents[1]._probs = [start[1][0], start[1][1], 1-start[1][0]-start[1][1]]
+        return train_agents_simultaneous_single(env, cross_agents, nb)
 
 
 
@@ -137,14 +167,17 @@ def average_prob(env, start, sc):
 def prepare_plot(name, start=(0,0), sc=0):
     game = create_game(name)
     env = create_environment(game)
-
-    return average_prob(env, start, sc)
+    if sc !=3:
+        return average_prob(env, start, sc)
+    else:
+        return execute_scenarios_probs(env, ITERATIONS, start, sc)
 
 
 def main(_):
-    game = create_game("PD")
+    game = create_game("RPS")
     env = create_environment(game)
-    return average_prob(env, start=(0.8,0.8), sc=2)
+    print(env.num_actions_per_step)
+    return execute_scenarios_probs(env, ITERATIONS, ((0.3 , 0.3), (0.3 , 0.3)), 3)
 
 
 

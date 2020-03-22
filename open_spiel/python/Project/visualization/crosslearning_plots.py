@@ -18,10 +18,10 @@ dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_p
 
 # IMPORTANT REMARK: The accuracy of the probarray_visualization needs to be set at 1.
 
-pd = False
-bos = False
+pd = True
+bos = True
 mp = True
-
+rps = True
 if (pd):
     probs_prisonners_dilemma1 = prepare_plot("PD", (0.5,0.5), 2)
     probs_prisonners_dilemma2 = prepare_plot("PD", (0.8,0.2), 2)
@@ -43,6 +43,12 @@ if(mp):
     probs_matching_pennies3 = prepare_plot("MP", (0.7, 0.7), 2)
     probs_matching_pennies4 = prepare_plot("MP", (0.8, 0.8), 2)
     probs_matching_pennies5 = prepare_plot("MP", (0.75, 0.75), 2)
+
+if(rps):
+    probs_rock_paper_scissors1 = prepare_plot("RPS", ((0.3 , 0.3), (0.3 , 0.3)), 3)
+    probs_rock_paper_scissors2 = prepare_plot("RPS", ((0.8, 0.1), (0.8, 0.1)), 3)
+    probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
+    probs_rock_paper_scissors4 = prepare_plot("RPS", ((0.1, 0.1), (0.1, 0.1)), 3)
 
 
 # Opmaak voor de trace plots
@@ -110,6 +116,24 @@ ax3a = fig2.add_subplot(236, projection="2x2")
 ax3a.streamplot(dyn_battle_of_the_sexes, color="velocity", linewidth="velocity")
 ax3a.set_title("Battle of the Sexes", fontweight="bold")
 ax3a.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
+
+
+fig3 = plt.figure(figsize=(10,10))
+
+ax = fig3.add_subplot(121, projection="3x3")
+ax.quiver(dyn_rock_paper_scissors, boundary=True)
+ax.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
+ax.set_labels(["Rock", "Paper", "Scissors"])
+if rps:
+    ax.plot(probs_rock_paper_scissors1)
+    ax.plot (probs_rock_paper_scissors2)
+    ax.plot(probs_rock_paper_scissors3)
+    ax.plot(probs_rock_paper_scissors4)
+
+axa = fig3.add_subplot(122, projection="3x3")
+axa.streamplot(dyn_rock_paper_scissors, color="velocity", linewidth="velocity")
+axa.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
+axa.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()
 
