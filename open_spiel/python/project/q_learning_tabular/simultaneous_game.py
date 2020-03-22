@@ -129,9 +129,7 @@ def main(_):
         for idx in range(num_players)
     ]
 
-    agent2 = [
-
-    ]
+    agent2 = []
 
     agents = agents1
 

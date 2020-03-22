@@ -13,6 +13,7 @@ from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
 
+
 def train_agents(env, agents, nbep):
     for ep in range(nbep):
         time_step = env.reset()
@@ -21,7 +22,6 @@ def train_agents(env, agents, nbep):
             time_step = env.step(actions)
         agents[0].step(time_step)
         agents[1].step(time_step)
-
 
 
 def evaluate_agents(env, agents):
@@ -33,6 +33,7 @@ def evaluate_agents(env, agents):
     agents[1].step(time_step, is_evaluation = True)
     return time_step.rewards
 
+
 def create_game():
     return pyspiel.create_matrix_game("matching_pennies", "Matching Pennies",
                                       ["Heads", "Tails"], ["Heads", "Tails"],
@@ -41,13 +42,11 @@ def create_environment(game):
     return rl_environment.Environment(game)
 
 
-
 def execute_scenarios(env, nb):
     sumScenario1 = np.zeros(2)
     for _ in range(nb):
         rewardCounter(sumScenario1 , scenario1(env))
     logging.info("The results of scenario 1 are: %s", sumScenario1)
-
 
 
 """
@@ -68,15 +67,11 @@ def scenario1(env):
     return evaluate_agents(env, agents)
 
 
-
-
 def rewardCounter(totalSum, reward):
     if reward == [1.0, -1.0]:
         totalSum[0] +=1
     elif reward == [-1.0, 1.0]:
         totalSum[1] +=1
-
-
 
 
 def main(_):

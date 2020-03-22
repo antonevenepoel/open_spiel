@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
+from open_spiel.python.project.visualization import paths
 from open_spiel.python.project.visualization.qlearning_probs_v2 import calculate_probs
 
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
@@ -88,3 +89,9 @@ ax1.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
 ax1.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()
+
+# save
+# `paths` voor persoonlijke paden
+path = paths.path_arnout if paths.path_flag else paths.path_anton
+fig.savefig(path + 'qlearning-pd|mp|bs' + '.' + paths.type)
+fig1.savefig(path + 'qlearning-rps' + '.' + paths.type)
