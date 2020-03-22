@@ -3,7 +3,7 @@ import pyspiel
 import numpy as np
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import tabular_qlearner, random_agent
-from open_spiel.python.project.q_learning_tabular.simultaneous_game import eval_two_agents
+from open_spiel.python.Project.q_learning_tabular.simultaneous_game import eval_two_agents
 
 def calculate_probs(game_name):
     game_dict = {
@@ -64,6 +64,7 @@ def calculate_probs(game_name):
         # Episode is over, step all agents with final info state.
         for agent in [agents[0], random_agents[1]]:
             agent.step(time_step0)
+            
 
         while not time_step1.last():
             step_output0 = random_agents[0].step(time_step1)

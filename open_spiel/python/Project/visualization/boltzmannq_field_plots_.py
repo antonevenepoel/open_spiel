@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
-from open_spiel.python.project.visualization.qlearning_probs_v1 import calculate_probs
+
 
 # True for field plot, False for phase plot
 PLOT_FLAG = False
