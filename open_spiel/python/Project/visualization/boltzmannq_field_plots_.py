@@ -11,6 +11,7 @@ from open_spiel.python.project.visualization import paths
 
 # True for field plot, False for phase plot
 PLOT_FLAG = False
+color = "black"
 
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
 payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
@@ -22,7 +23,7 @@ fig = plt.figure(figsize=(10,10))
 for i, T in zip(range(6),reversed([0.000001,1,2,3,4,float("inf")])):
     dyn_prisoners_dilemma = dynamics.MultiPopulationDynamics(payoff_matrix_prisoners_dilemma, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig.add_subplot(int("23{}".format(i+1)), projection="2x2")
-    ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color="velocity")
+    ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color=color)
     ax1.set_title("Prisoner's Dilemma, \u03C4={}".format(round(T,2)), fontweight="bold")
     ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
 
@@ -31,7 +32,7 @@ fig1 = plt.figure(figsize=(10,10))
 for i, T in zip(range(6),reversed([0.000001,0.1,0.5,1,2,float("inf")])):
     dyn_matching_pennies = dynamics.MultiPopulationDynamics(payoff_matrix_matching_pennies, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig1.add_subplot(int("23{}".format(i+1)), projection="2x2")
-    ax1.quiver(dyn_matching_pennies) if PLOT_FLAG else ax1.streamplot(dyn_matching_pennies,linewidth="velocity", color="velocity")
+    ax1.quiver(dyn_matching_pennies) if PLOT_FLAG else ax1.streamplot(dyn_matching_pennies,linewidth="velocity", color=color)
     ax1.set_title("Matching Pennies, \u03C4={}".format(round(T,2)), fontweight="bold")
     ax1.set(xlabel="Player 1: Pr(Playing Head)", ylabel="Player 2: Pr(Playing Head)")
 
@@ -40,7 +41,7 @@ fig2 = plt.figure(figsize=(10,10))
 for i, T in zip(range(6),reversed([0.000001,0.5,0.75,1,2,float("inf")])):
     dyn_battle_of_the_sexes = dynamics.MultiPopulationDynamics(payoff_matrix_battle_of_the_sexes, [partial(dynamics.boltzmannq,temperature=T)] * 2)
     ax1 = fig2.add_subplot(int("23{}".format(i+1)), projection="2x2")
-    ax1.quiver(dyn_battle_of_the_sexes) if PLOT_FLAG else ax1.streamplot(dyn_battle_of_the_sexes,linewidth="velocity", color="velocity")
+    ax1.quiver(dyn_battle_of_the_sexes) if PLOT_FLAG else ax1.streamplot(dyn_battle_of_the_sexes,linewidth="velocity", color=color)
     ax1.set_title("Battle of the Sexes, \u03C4={}".format(round(T,2)), fontweight="bold")
     ax1.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
 
