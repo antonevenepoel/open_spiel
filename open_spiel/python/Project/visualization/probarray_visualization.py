@@ -10,12 +10,14 @@ import numpy as np
 import pyspiel
 
 from open_spiel.python import rl_environment
-from open_spiel.python.Project.CrossLearning import cross_learner
+from open_spiel.python.project.cross_learning import cross_learner
 from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
 
 ACCURACY = 1
+
 ITERATIONS = 30000
+
 
 def train_agents(env, agents, nbep, i):
     prob_array = []
@@ -58,6 +60,7 @@ def train_agents_simultaneous(env, agents, nbep):
     prob_array.append(prob_array_agent_2)
     return prob_array
 
+
 def train_agents_simultaneous_single(env, agents, nbep):
     prob_array = []
 
@@ -76,7 +79,6 @@ def train_agents_simultaneous_single(env, agents, nbep):
     return prob_array
 
 
-#  print(time_step.rewards)
 def evaluate_agents(env, agents):
     time_step = env.reset()
     while not time_step.last():
@@ -127,7 +129,7 @@ def execute_scenarios_probs(env, nb, start, sc):
         list.append(train_agents(env, [agents[0], random_agents[0]], nb, 0))
         list.append(train_agents(env, [random_agents[1], agents[1]], nb, 1))
         return list
-    elif sc ==1:
+    elif sc == 1:
         return train_agents_simultaneous(env, agents, nb)
     elif sc ==2:
         cross_agents = [

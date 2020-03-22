@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
-from open_spiel.python.Project.visualization.probarray_visualization import prepare_plot
+from open_spiel.python.project.visualization import paths
+from open_spiel.python.project.visualization.probarray_visualization import prepare_plot
 
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
 payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
@@ -18,37 +19,39 @@ dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_p
 
 # IMPORTANT REMARK: The accuracy of the probarray_visualization needs to be set at 1.
 
+
+PLOT_FLAG = True
+
 pd = True
 bos = True
 mp = True
 rps = True
 if (pd):
-    probs_prisonners_dilemma1 = prepare_plot("PD", (0.5,0.5), 2)
-    probs_prisonners_dilemma2 = prepare_plot("PD", (0.8,0.2), 2)
-    probs_prisonners_dilemma3 = prepare_plot("PD", (0.2,0.3), 2)
-    probs_prisonners_dilemma4 = prepare_plot("PD", (0.6,0.2), 2)
-    probs_prisonners_dilemma5 = prepare_plot("PD", (0.8,0.6), 2)
-
-if(bos):
-    probs_battle_of_the_sexes1 = prepare_plot("BOS", (0.5, 0.5), 2)
-    probs_battle_of_the_sexes2 = prepare_plot("BOS", (0.8, 0.8), 2)
-    probs_battle_of_the_sexes3 = prepare_plot("BOS", (0.6, 0.3), 2)
-    probs_battle_of_the_sexes4 = prepare_plot("BOS", (0.5, 0.7), 2)
-    probs_battle_of_the_sexes5 = prepare_plot("BOS", (0.6, 0.5), 2)
-
+    probs_prisonners_dilemma1 = prepare_plot("PD", (0.7,0.7), 2)
+    probs_prisonners_dilemma2 = prepare_plot("PD", (0.9,0.5), 2)
+    probs_prisonners_dilemma3 = prepare_plot("PD", (0.5,0.9), 2)
+    probs_prisonners_dilemma4 = prepare_plot("PD", (0.7,0.4), 2)
+    probs_prisonners_dilemma5 = prepare_plot("PD", (0.4,0.7), 2)
 
 if(mp):
-    probs_matching_pennies1 = prepare_plot("MP", (0.5, 0.5), 2)
-    probs_matching_pennies2 = prepare_plot("MP", (0.6, 0.6), 2)
-    probs_matching_pennies3 = prepare_plot("MP", (0.7, 0.7), 2)
-    probs_matching_pennies4 = prepare_plot("MP", (0.8, 0.8), 2)
-    probs_matching_pennies5 = prepare_plot("MP", (0.75, 0.75), 2)
+    probs_matching_pennies1 = prepare_plot("MP", (0.55, 0.55), 2)
+    probs_matching_pennies2 = prepare_plot("MP", (0.75, 0.75), 2)
+    probs_matching_pennies3 = prepare_plot("MP", (0.9, 0.9), 2)
 
 if(rps):
     probs_rock_paper_scissors1 = prepare_plot("RPS", ((0.3 , 0.3), (0.3 , 0.3)), 3)
     probs_rock_paper_scissors2 = prepare_plot("RPS", ((0.8, 0.1), (0.8, 0.1)), 3)
     probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
     probs_rock_paper_scissors4 = prepare_plot("RPS", ((0.1, 0.1), (0.1, 0.1)), 3)
+
+
+if(bos):
+    probs_battle_of_the_sexes1 = prepare_plot("BOS", (0.3, 0.6), 2)
+    probs_battle_of_the_sexes2 = prepare_plot("BOS", (1-0.6, 1-0.3), 2)
+    probs_battle_of_the_sexes3 = prepare_plot("BOS", (0.2, 0.4), 2)
+    probs_battle_of_the_sexes4 = prepare_plot("BOS", (1-0.4, 1-0.2), 2)
+    probs_battle_of_the_sexes5 = prepare_plot("BOS", (0.8, 0.1), 2)
+    probs_battle_of_the_sexes6 = prepare_plot("BOS", (1-0.1, 1-0.8), 2)
 
 
 # Opmaak voor de trace plots
@@ -67,55 +70,42 @@ linestyle = "dashed"
 # 2x2: Prisoner's Dilemma, Matching Pennies, Battle of the Sexes (Population of 2)
 #####
 
-fig1 = plt.figure(figsize=(10,10))
+fig1 = plt.figure(figsize=(12,4))
 
-ax1 = fig1.add_subplot(231, projection="2x2")
-ax1.quiver(dyn_prisoners_dilemma)
-ax1.set_title("Prisoner's Dilemma: average trajectory of Q-Learning", fontweight="bold")
+
+ax1 = fig1.add_subplot(131, projection="2x2")
+ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color="velocity")
+ax1.set_title("Prisoner's Dilemma", fontweight="bold")
 ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
 if(pd):
-    ax1.plot(probs_prisonners_dilemma1)
-    ax1.plot(probs_prisonners_dilemma2)
-    ax1.plot(probs_prisonners_dilemma3)
-    ax1.plot(probs_prisonners_dilemma4)
-    ax1.plot(probs_prisonners_dilemma5)
+    ax1.plot(probs_prisonners_dilemma1, color=color)
+    ax1.plot(probs_prisonners_dilemma2, color=color)
+    ax1.plot(probs_prisonners_dilemma3, color=color)
+    ax1.plot(probs_prisonners_dilemma4, color=color)
+    ax1.plot(probs_prisonners_dilemma5, color=color)
 
-fig2 = plt.figure(figsize=(10, 10))
-ax1a = fig2.add_subplot(234, projection="2x2")
-ax1a.streamplot(dyn_prisoners_dilemma, color="velocity", linewidth="velocity")
-ax1a.set_title("Prisoner's Dilemma", fontweight="bold")
-ax1a.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
 
-ax2 = fig2.add_subplot(232, projection="2x2")
-ax2.quiver(dyn_matching_pennies)
+ax2 = fig1.add_subplot(132, projection="2x2")
+ax2.quiver(dyn_matching_pennies) if PLOT_FLAG else ax2.streamplot(dyn_matching_pennies,linewidth="velocity", color="velocity")
 ax2.set_title("Matching Pennies", fontweight="bold")
 ax2.set(xlabel="Player 1: Pr(Playing Head)",ylabel="Player 2: Pr(Playing Head)")
 if(mp):
-    ax2.plot(probs_matching_pennies1)
-    ax2.plot(probs_matching_pennies2)
-    ax2.plot(probs_matching_pennies3)
-    ax2.plot(probs_matching_pennies4)
-    ax2.plot(probs_matching_pennies5)
-ax2a = fig2.add_subplot(235, projection="2x2")
-ax2a.streamplot(dyn_matching_pennies, color="velocity", linewidth="velocity")
-ax2a.set_title("Matching Pennies", fontweight="bold")
-ax2a.set(xlabel="Player 1: Pr(Playing Head)",ylabel="Player 2: Pr(Playing Head)")
+    ax2.plot(probs_matching_pennies1, color=color)
+    ax2.plot(probs_matching_pennies2, color=color)
+    ax2.plot(probs_matching_pennies3, color=color)
 
-ax3 = fig2.add_subplot(233, projection="2x2")
-ax3.quiver(dyn_battle_of_the_sexes)
+
+ax3 = fig1.add_subplot(133, projection="2x2")
+ax3.quiver(dyn_battle_of_the_sexes) if PLOT_FLAG else ax3.streamplot(dyn_battle_of_the_sexes,linewidth="velocity", color="velocity")
 ax3.set_title("Battle of the Sexes", fontweight="bold")
 ax3.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
 if(bos):
-    ax3.plot(probs_battle_of_the_sexes1)
-    ax3.plot(probs_battle_of_the_sexes2)
-    ax3.plot(probs_battle_of_the_sexes3)
-    ax3.plot(probs_battle_of_the_sexes4)
-    ax3.plot(probs_battle_of_the_sexes5)
-#ax3.plot(probs_battle_of_the_sexes, color=color, marker=marker, linestyle=linestyle)
-ax3a = fig2.add_subplot(236, projection="2x2")
-ax3a.streamplot(dyn_battle_of_the_sexes, color="velocity", linewidth="velocity")
-ax3a.set_title("Battle of the Sexes", fontweight="bold")
-ax3a.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
+    ax3.plot(probs_battle_of_the_sexes1, color=color)
+    ax3.plot(probs_battle_of_the_sexes2, color=color)
+    ax3.plot(probs_battle_of_the_sexes3, color=color)
+    ax3.plot(probs_battle_of_the_sexes4, color=color)
+    ax3.plot(probs_battle_of_the_sexes5, color=color)
+    ax3.plot(probs_battle_of_the_sexes6, color=color)
 
 
 fig3 = plt.figure(figsize=(10,10))
@@ -137,5 +127,9 @@ axa.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()
 
+# save
+# `paths` voor persoonlijke paden
+path = paths.path_arnout if paths.path_flag else paths.path_anton
+fig1.savefig(path + 'crosslearning-pdmpbos' + '.' + paths.type)
 
 
