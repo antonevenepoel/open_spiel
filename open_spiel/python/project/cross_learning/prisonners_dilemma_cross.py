@@ -12,7 +12,7 @@ import pyspiel
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
-from open_spiel.python.Project.CrossLearning import cross_learner
+from open_spiel.python.project.cross_learning import cross_learner
 
 
 
@@ -54,29 +54,25 @@ def create_environment(game):
 def execute_scenarios_probs(game, nb):
     env = create_environment(game)
 
-
     agents = [
         tabular_qlearner.QLearner(player_id=0, num_actions=env.num_actions_per_step, step_size=0.1, epsilon=0.2, discount_factor=1.0 ),
         tabular_qlearner.QLearner(player_id=1, num_actions=env.num_actions_per_step, step_size=0.1, epsilon=0.2, discount_factor=1.0)
-
     ]
+
     cross_agents = [
         cross_learner.CrossLearner(player_id=0, num_actions=env.num_actions_per_step),
         cross_learner.CrossLearner(player_id=0, num_actions=env.num_actions_per_step)
     ]
+
     random_agents = [
         random_agent.RandomAgent(player_id=1, num_actions=env.num_actions_per_step, ),
         random_agent.RandomAgent(player_id=0, num_actions=env.num_actions_per_step, )
-
     ]
 
+    list = train_agents(env, [cross_agents[0], cross_agents[1]], 1000)
 
-
-    list =  train_agents(env, [cross_agents[0], cross_agents[1]], 1000)
 
     return list
-
-
 
 
 def rewardCounter(totalSum, reward):

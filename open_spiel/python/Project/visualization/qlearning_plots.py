@@ -43,13 +43,12 @@ fig = plt.figure(figsize=(10,10))
 
 ax1 = fig.add_subplot(231, projection="2x2")
 ax1.quiver(dyn_prisoners_dilemma)
-ax1.set_title("Prisoner's Dilemma: average trajectory of Q-Learning", fontweight="bold")
+ax1.set_title("Prisoner's Dilemma", fontweight="bold")
 ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
 ax1.plot(probs_prisonners_dilemma1)
 ax1.plot(probs_prisonners_dilemma2)
 ax1.plot(probs_prisonners_dilemma3)
 
-fig = plt.figure(figsize=(10, 10))
 ax1a = fig.add_subplot(234, projection="2x2")
 ax1a.streamplot(dyn_prisoners_dilemma, color="velocity", linewidth="velocity")
 ax1a.set_title("Prisoner's Dilemma", fontweight="bold")
@@ -98,5 +97,5 @@ plt.show()
 # save
 # `paths` voor persoonlijke paden
 path = paths.path_arnout if paths.path_flag else paths.path_anton
-fig.savefig(path + 'qlearning-pd|mp|bs' + '.' + paths.type)
+fig.savefig(path + 'qlearning-pdmpbs' + '.' + paths.type)
 fig1.savefig(path + 'qlearning-rps' + '.' + paths.type)
