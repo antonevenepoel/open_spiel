@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
 from open_spiel.python.egt import visualization
-from open_spiel.python.project.dynamics_lenient_boltzmannq import dynamics_lb
+from open_spiel.python.Project.dynamics_lenient_boltzmannq import dynamics_lb
 
 # True for field plot, False for phase plot
 from open_spiel.python.project.visualization import paths
