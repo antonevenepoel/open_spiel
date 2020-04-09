@@ -43,9 +43,8 @@ if(rps):
     solution = probs_rock_paper_scissors1[len(probs_rock_paper_scissors1) -1]
 
     probs_rock_paper_scissors2 = prepare_plot("RPS", ((0.8, 0.1), (0.8, 0.1)), 3)
-    probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
+    # probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
     probs_rock_paper_scissors4 = prepare_plot("RPS", ((0.1, 0.1), (0.1, 0.1)), 3)
-
 
 if(bos):
     probs_battle_of_the_sexes1 = prepare_plot("BOS", (0.3, 0.6), 2)
@@ -75,10 +74,12 @@ linestyle = "dashed"
 fig1 = plt.figure(figsize=(12,4))
 
 
-ax1 = fig1.add_subplot(131, projection="2x2")
+ax1 = fig1.add_subplot(141, projection="2x2")
 ax1.quiver(dyn_prisoners_dilemma) if PLOT_FLAG else ax1.streamplot(dyn_prisoners_dilemma,linewidth="velocity", color="velocity")
 ax1.set_title("Prisoner's Dilemma", fontweight="bold")
-ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
+ax1.set_xlabel("Player 1: Pr(Cooperate)", fontweight="bold")
+ax1.set_ylabel("Player 2: Pr(Cooperate)", fontweight="bold")
+
 if(pd):
     ax1.plot(probs_prisonners_dilemma1, color=color)
     ax1.plot(probs_prisonners_dilemma2, color=color)
@@ -87,20 +88,22 @@ if(pd):
     ax1.plot(probs_prisonners_dilemma5, color=color)
 
 
-ax2 = fig1.add_subplot(132, projection="2x2")
+ax2 = fig1.add_subplot(142, projection="2x2")
 ax2.quiver(dyn_matching_pennies) if PLOT_FLAG else ax2.streamplot(dyn_matching_pennies,linewidth="velocity", color="velocity")
 ax2.set_title("Matching Pennies", fontweight="bold")
-ax2.set(xlabel="Player 1: Pr(Playing Head)",ylabel="Player 2: Pr(Playing Head)")
+ax2.set_xlabel("Player 1: Pr(Playing Head)", fontweight="bold")
+ax2.set_ylabel("Player 2: Pr(Playing Head)", fontweight="bold")
 if(mp):
     ax2.plot(probs_matching_pennies1, color=color)
     ax2.plot(probs_matching_pennies2, color=color)
     ax2.plot(probs_matching_pennies3, color=color)
 
 
-ax3 = fig1.add_subplot(133, projection="2x2")
+ax3 = fig1.add_subplot(143, projection="2x2")
 ax3.quiver(dyn_battle_of_the_sexes) if PLOT_FLAG else ax3.streamplot(dyn_battle_of_the_sexes,linewidth="velocity", color="velocity")
 ax3.set_title("Battle of the Sexes", fontweight="bold")
-ax3.set(xlabel="Player 1: Pr(Boxing)",ylabel="Player 2: Pr(Boxing)")
+ax3.set_xlabel("Player 1: Pr(Boxing)", fontweight="bold")
+ax3.set_ylabel("Player 2: Pr(Boxing)", fontweight="bold")
 if(bos):
     ax3.plot(probs_battle_of_the_sexes1, color=color)
     ax3.plot(probs_battle_of_the_sexes2, color=color)
@@ -110,28 +113,22 @@ if(bos):
     ax3.plot(probs_battle_of_the_sexes6, color=color)
 
 
-fig3 = plt.figure(figsize=(10,10))
-
-ax = fig3.add_subplot(121, projection="3x3")
+ax = fig1.add_subplot(144, projection="3x3")
 ax.quiver(dyn_rock_paper_scissors, boundary=True)
 ax.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
 ax.set_labels(["Rock", "Paper", "Scissors"])
 if rps:
-    ax.plot(probs_rock_paper_scissors1)
-    ax.plot (probs_rock_paper_scissors2)
-    ax.plot(probs_rock_paper_scissors3)
-    ax.plot(probs_rock_paper_scissors4)
+    ax.plot(probs_rock_paper_scissors1, color=color)
+    ax.plot (probs_rock_paper_scissors2, color=color)
+    # ax.plot(probs_rock_paper_scissors3, color=color)
+    ax.plot(probs_rock_paper_scissors4, color=color)
 
-axa = fig3.add_subplot(122, projection="3x3")
-axa.streamplot(dyn_rock_paper_scissors, color="velocity", linewidth="velocity")
-axa.set_title("Biased Rock, Paper, Scissors", fontweight="bold")
-axa.set_labels(["Rock", "Paper", "Scissors"])
 
 plt.show()
 
 # save
 # `paths` voor persoonlijke paden
 path = paths.path_arnout if paths.path_flag else paths.path_anton
-fig1.savefig(path + 'crosslearning-pdmpbos' + '.' + paths.type)
+fig1.savefig(path + 'crosslearning' + '.' + paths.type)
 
 

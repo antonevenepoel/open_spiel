@@ -19,6 +19,7 @@ ACCURACY = 1
 ITERATIONS = 1000
 
 
+
 def train_agents(env, agents, nbep, i):
     prob_array = []
     for ep in range(nbep):
@@ -169,7 +170,7 @@ def average_prob(env, start, sc):
 def prepare_plot(name, start=(0,0), sc=0):
     game = create_game(name)
     env = create_environment(game)
-    if sc !=3:
+    if sc != 3:
         return average_prob(env, start, sc)
     else:
         return execute_scenarios_probs(env, ITERATIONS, start, sc)
