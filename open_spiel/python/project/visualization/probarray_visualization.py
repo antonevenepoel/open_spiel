@@ -16,7 +16,7 @@ from open_spiel.python.algorithms import tabular_qlearner
 
 ACCURACY = 1
 
-ITERATIONS = 30000
+ITERATIONS = 1000
 
 
 def train_agents(env, agents, nbep, i):

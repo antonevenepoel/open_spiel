@@ -22,9 +22,9 @@ dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_p
 
 PLOT_FLAG = True
 
-pd = True
-bos = True
-mp = True
+pd = False
+bos = False
+mp = False
 rps = True
 if (pd):
     probs_prisonners_dilemma1 = prepare_plot("PD", (0.7,0.7), 2)
@@ -40,6 +40,8 @@ if(mp):
 
 if(rps):
     probs_rock_paper_scissors1 = prepare_plot("RPS", ((0.3 , 0.3), (0.3 , 0.3)), 3)
+    solution = probs_rock_paper_scissors1[len(probs_rock_paper_scissors1) -1]
+
     probs_rock_paper_scissors2 = prepare_plot("RPS", ((0.8, 0.1), (0.8, 0.1)), 3)
     probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
     probs_rock_paper_scissors4 = prepare_plot("RPS", ((0.1, 0.1), (0.1, 0.1)), 3)

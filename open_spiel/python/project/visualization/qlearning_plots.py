@@ -19,8 +19,9 @@ dyn_battle_of_the_sexes = dynamics.MultiPopulationDynamics(payoff_matrix_battle_
 dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_paper_scissors, dynamics.replicator)
 
 probs_prisonners_dilemma1 = prepare_plot("PD", (1,1), 1)
-probs_prisonners_dilemma2 = prepare_plot("PD", (0,1), 1)
-probs_prisonners_dilemma3 = prepare_plot("PD", (1,0), 1)
+probs_prisonners_dilemma2 = prepare_plot("PD", (0,2), 1)
+probs_prisonners_dilemma3 = prepare_plot("PD", (2,0), 1)
+probs_prisonners_dilemma4 = prepare_plot("PD", (0,0), 1)
 
 
 # Opmaak voor de trace plots
@@ -48,6 +49,7 @@ ax1.set(xlabel="Player 1: Pr(Cooperate)",ylabel="Player 2: Pr(Cooperate)")
 ax1.plot(probs_prisonners_dilemma1)
 ax1.plot(probs_prisonners_dilemma2)
 ax1.plot(probs_prisonners_dilemma3)
+ax1.plot(probs_prisonners_dilemma4)
 
 ax1a = fig.add_subplot(234, projection="2x2")
 ax1a.streamplot(dyn_prisoners_dilemma, color="velocity", linewidth="velocity")
