@@ -3,21 +3,18 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import logging
 from absl import app
 import numpy as np
 
 import pyspiel
 
 from open_spiel.python import rl_environment
-from open_spiel.python.project.cross_learning import cross_learner
+from open_spiel.python.project.part_1.cross_learning import cross_learner
 from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
 
-ACCURACY = 1
-
+ACCURACY = 10000
 ITERATIONS = 1000
-
 
 
 def train_agents(env, agents, nbep, i):
@@ -112,8 +109,8 @@ def create_environment(game):
 
 def execute_scenarios_probs(env, nb, start, sc):
     agents = [
-        tabular_qlearner.QLearner(player_id=0, num_actions=env.num_actions_per_step, step_size=0.5, epsilon=0.2, discount_factor=1.0 ),
-        tabular_qlearner.QLearner(player_id=1, num_actions=env.num_actions_per_step, step_size=0.5, epsilon=0.2, discount_factor=1.0)
+        tabular_qlearner.QLearner(player_id=0, num_actions=env.num_actions_per_step, step_size=0.5, epsilon=0.05, discount_factor=1.0 ),
+        tabular_qlearner.QLearner(player_id=1, num_actions=env.num_actions_per_step, step_size=0.5, epsilon=0.05, discount_factor=1.0)
 
     ]
     random_agents = [

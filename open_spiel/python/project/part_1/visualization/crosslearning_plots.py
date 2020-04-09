@@ -3,9 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from open_spiel.python.egt import dynamics
-from open_spiel.python.egt import visualization
-from open_spiel.python.project.visualization import paths
-from open_spiel.python.project.visualization.probarray_visualization import prepare_plot
+from open_spiel.python.project.part_1.visualization import paths
+from open_spiel.python.project.part_1.visualization.probarray_visualization import prepare_plot
 
 payoff_matrix_prisoners_dilemma = np.array([[[3,0],[5,1]],[[3,5],[0,1]]])
 payoff_matrix_matching_pennies = np.array([[[1,-1],[-1,1]],[[-1,1],[1,-1]]])
@@ -22,9 +21,9 @@ dyn_rock_paper_scissors = dynamics.SinglePopulationDynamics(payoff_matrix_rock_p
 
 PLOT_FLAG = True
 
-pd = False
-bos = False
-mp = False
+pd = True
+bos = True
+mp = True
 rps = True
 if (pd):
     probs_prisonners_dilemma1 = prepare_plot("PD", (0.7,0.7), 2)
@@ -40,8 +39,6 @@ if(mp):
 
 if(rps):
     probs_rock_paper_scissors1 = prepare_plot("RPS", ((0.3 , 0.3), (0.3 , 0.3)), 3)
-    solution = probs_rock_paper_scissors1[len(probs_rock_paper_scissors1) -1]
-
     probs_rock_paper_scissors2 = prepare_plot("RPS", ((0.8, 0.1), (0.8, 0.1)), 3)
     # probs_rock_paper_scissors3 = prepare_plot("RPS", ((0.1, 0.8), (0.1, 0.8)), 3)
     probs_rock_paper_scissors4 = prepare_plot("RPS", ((0.1, 0.1), (0.1, 0.1)), 3)

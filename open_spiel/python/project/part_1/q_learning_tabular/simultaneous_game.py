@@ -30,8 +30,7 @@ import sys
 from absl import app
 from absl import flags
 import numpy as np
-from six.moves import input
-from six.moves import range
+from six.moves import *
 
 import pyspiel
 

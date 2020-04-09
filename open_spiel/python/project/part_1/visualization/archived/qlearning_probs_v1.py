@@ -3,7 +3,7 @@ import pyspiel
 import numpy as np
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import tabular_qlearner
-from open_spiel.python.project.q_learning_tabular.simultaneous_game import eval_two_agents
+
 
 def calculate_probs(game_name):
     game_dict = {

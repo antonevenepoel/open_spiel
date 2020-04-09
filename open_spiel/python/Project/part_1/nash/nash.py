@@ -12,7 +12,7 @@ import pyspiel
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import random_agent
 from open_spiel.python.algorithms import tabular_qlearner
-from open_spiel.python.project.cross_learning import cross_learner
+from open_spiel.python.project.part_1.cross_learning import cross_learner
 
 def train_agents(env, agents, nbep):
     prob_array = []
