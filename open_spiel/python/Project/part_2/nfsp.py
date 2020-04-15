@@ -31,7 +31,7 @@ from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
 import matplotlib.pyplot as plt
-from open_spiel.python.project.part_1.visualization import paths
+from open_spiel.python.project.part_2 import paths
 
 
 class NFSPPolicies(policy.Policy):
@@ -108,7 +108,7 @@ def train_nfsp(
         losses = [agent.loss for agent in agents]
         logging.info("Losses: %s", losses)
         expl = exploitability.exploitability(env.game, expl_policies_avg)
-        print("Exploitability AVG", ep, expl)
+        print("Exploitability AVG", ep + 1, expl)
         print("_____________________________________________")
         # logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
         # logging.info("_____________________________________________")
@@ -137,17 +137,17 @@ output = {}
 if __name__ == '__main__':
   output = train_nfsp(
     hidden_layers_sizes=[128, 128, 64],
-    eval_every=int(5e3),
-    num_train_episodes=int(1e5)
+    eval_every=int(1e3),
+    num_train_episodes=int(5e3)
   )
 
   # plots
   plt.title("NFSP: " + output["game"], fontweight="bold")
   plt.xlabel("Episodes", fontweight="bold")
   plt.ylabel("Exploitability", fontweight="bold")
-  plt.loglog()
   plt.plot(output["episodes"], output["exploitability"])
+  plt.loglog()
   plt.savefig(paths.path_arnout
-              + 'nfsp_' + output["episodes"][-1] + '_episodes'
+              + 'nfsp_' + str(output["episodes"][-1]) + '_episodes'
               + '.' + paths.type)
   plt.show()

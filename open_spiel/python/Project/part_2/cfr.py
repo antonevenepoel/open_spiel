@@ -80,6 +80,6 @@ if __name__ == "__main__":
     plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
     plt.savefig(paths.path_arnout
-                + 'cfr_' + str(output["iterations"][-1]) + '_episodes'
+                + 'cfr_' + str(output["iterations"][-1]) + '_iterations'
                 + '.' + paths.type)
     plt.show()
