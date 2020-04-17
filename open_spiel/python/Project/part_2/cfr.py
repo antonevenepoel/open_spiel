@@ -18,6 +18,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 from absl import app
 from absl import flags
 
@@ -41,46 +42,25 @@ def train_cfr(
         iterations=int(1e4),
         print_freq=int(1e3)
 ) -> dict:
+    data = {
+        "players": players,
+        "game": game,
+        "print_freq": print_freq,
+        "exploitability": [],
+        "iterations": []
+    }
 
-  data = {
-      "players": players,
-      "game": game,
-      "exploitability": [],
-      "iterations": []
-  }
+    game = pyspiel.load_game(game,  # FLAGS.game,
+                             {"players": pyspiel.GameParameter(players)})  # FLAGS.players)})
+    cfr_solver = cfr.CFRSolver(game)
+    for i in range(iterations):  # FLAGS.iterations):
+        cfr_solver.evaluate_and_update_policy()
+        if (i + 1) % print_freq == 0 or i == 0:  # FLAGS.print_freq == 0:
+            conv = exploitability.exploitability(game, cfr_solver.average_policy())
+            print("Iteration {} exploitability {}".format(i + 1, conv))
 
-  game = pyspiel.load_game(game, # FLAGS.game,
-                           {"players": pyspiel.GameParameter(players)}) # FLAGS.players)})
-  cfr_solver = cfr.CFRSolver(game)
-  for i in range(iterations): # FLAGS.iterations):
-    cfr_solver.evaluate_and_update_policy()
-    if (i+1) % print_freq == 0: # FLAGS.print_freq == 0:
-      conv = exploitability.exploitability(game, cfr_solver.average_policy())
-      print("Iteration {} exploitability {}".format(i+1, conv))
+            # store info
+            data["exploitability"].append(conv)
+            data["iterations"].append(i + 1)
 
-      # store info
-      data["exploitability"].append(conv)
-      data["iterations"].append(i+1)
-
-  return data
-
-
-output = {}
-if __name__ == "__main__":
-    output = train_cfr(
-        game="kuhn_poker",
-        players=2,
-        print_freq=int(1e3),
-        iterations=int(1e5)
-    )
-
-    # plots
-    plt.title("CFR: " + output["game"], fontweight="bold")
-    plt.xlabel("Iterations", fontweight="bold")
-    plt.ylabel("Exploitability", fontweight="bold")
-    plt.plot(output["iterations"], output["exploitability"])
-    plt.loglog()
-    plt.savefig(paths.path_arnout
-                + 'cfr_' + str(output["iterations"][-1]) + '_iterations'
-                + '.' + paths.type)
-    plt.show()
+    return data

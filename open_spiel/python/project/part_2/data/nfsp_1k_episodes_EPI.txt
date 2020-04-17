@@ -1,0 +1,28 @@
+# game: kuhn_poker 
+# players: 2 
+# hidden_layers_sizes: [64] 
+# replay_buffer_capacity: 200000 
+# num_train_episodes: 1000 
+# epsilon_start: 0.06 
+# epsilon_end: 0.001 
+# reservoir_buffer_capacity: 2000000 
+# anticipatory_param: 0.1 
+# eval_every: 100 
+# batch_size: 128 
+# rl_learning_rate: 0.01 
+# sl_learning_rate: 0.01 
+# min_buffer_size_to_learn: 1000 
+# learn_every: 64 
+# optimizer_str: sgd 
+# 
+1.000000000000000000e+00
+1.000000000000000000e+02
+2.000000000000000000e+02
+3.000000000000000000e+02
+4.000000000000000000e+02
+5.000000000000000000e+02
+6.000000000000000000e+02
+7.000000000000000000e+02
+8.000000000000000000e+02
+9.000000000000000000e+02
+1.000000000000000000e+03

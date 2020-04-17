@@ -21,6 +21,8 @@ from __future__ import print_function
 import os
 
 # Disable all tensorflow warnings
+import numpy as np
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow
 
@@ -75,12 +77,32 @@ def train_nfsp(
         epsilon_end=0.001,
         reservoir_buffer_capacity=int(2e6),
         anticipatory_param=0.1,
-        eval_every=int(1e4)
+        eval_every=int(1e4),
+        batch_size=128,
+        rl_learning_rate=0.01,
+        sl_learning_rate=0.01,
+        min_buffer_size_to_learn=1000,
+        learn_every=64,
+        optimizer_str="sgd"
 ) -> dict:
 
     data = {
         "game": game,
         "players": num_players,
+        "hidden_layers_sizes": hidden_layers_sizes,
+        "replay_buffer_capacity": replay_buffer_capacity,
+        "num_train_episodes": num_train_episodes,
+        "epsilon_start" : epsilon_start,
+        "epsilon_end": epsilon_end,
+        "reservoir_buffer_capacity": reservoir_buffer_capacity,
+        "anticipatory_param": anticipatory_param,
+        "eval_every": eval_every,
+        "batch_size": batch_size,
+        "rl_learning_rate": rl_learning_rate,
+        "sl_learning_rate": sl_learning_rate,
+        "min_buffer_size_to_learn": min_buffer_size_to_learn,
+        "learn_every": learn_every,
+        "optimizer_str": optimizer_str,
         "episodes": [],
         "losses": [],
         "exploitability": []
@@ -95,25 +117,37 @@ def train_nfsp(
         "replay_buffer_capacity": replay_buffer_capacity,  # FLAGS.replay_buffer_capacity,
         "epsilon_decay_duration": num_train_episodes,  # FLAGS.num_train_episodes,
         "epsilon_start": epsilon_start,  # FLAGS.epsilon_start,
-        "epsilon_end": epsilon_end  # FLAGS.epsilon_end,
+        "epsilon_end": epsilon_end,  # FLAGS.epsilon_end,
+        "batch_size": batch_size,
+        "rl_learning_rate": rl_learning_rate,
+        "sl_learning_rate": sl_learning_rate,
+        "min_buffer_size_to_learn": min_buffer_size_to_learn,
+        "learn_every": learn_every,
+        "optimizer_str": optimizer_str
     }
 
     with tf.Session() as sess:
         # pylint: disable=g-complex-comprehension
         agents = [
-            nfsp.NFSP(sess, idx, info_state_size, num_actions, hidden_layers_sizes,
-                      reservoir_buffer_capacity, anticipatory_param,
-                      # FLAGS.reservoir_buffer_capacity, FLAGS.anticipatory_param,
-                      **kwargs) for idx in range(num_players)
+            nfsp.NFSP(
+                sess,
+                idx,
+                info_state_size,
+                num_actions,
+                hidden_layers_sizes,
+                reservoir_buffer_capacity,
+                anticipatory_param,
+                **kwargs
+            ) for idx in range(num_players)
         ]
         expl_policies_avg = NFSPPolicies(env, agents, nfsp.MODE.average_policy)
         sess.run(tf.global_variables_initializer())
         for ep in range(num_train_episodes):  # FLAGS.num_train_episodes):
-            if (ep + 1) % eval_every == 0:  # FLAGS.eval_every == 0:
+            if (ep+1) % eval_every == 0 or ep == 0:  # FLAGS.eval_every == 0:
                 losses = [agent.loss for agent in agents]
                 logging.info("Losses: %s", losses)
                 expl = exploitability.exploitability(env.game, expl_policies_avg)
-                print("Exploitability AVG", ep + 1, expl)
+                print("Exploitability AVG", ep+1, expl)
                 print("_____________________________________________")
                 # logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
                 # logging.info("_____________________________________________")
@@ -121,7 +155,7 @@ def train_nfsp(
                 # store info
                 data["exploitability"].append(expl)
                 data["losses"].append(losses)
-                data["episodes"].append(ep + 1)
+                data["episodes"].append(ep+1)
 
             time_step = env.reset()
             while not time_step.last():
@@ -136,23 +170,3 @@ def train_nfsp(
 
     sess.close()
     return data
-
-
-output = {}
-if __name__ == '__main__':
-    output = train_nfsp(
-        hidden_layers_sizes=[64],
-        eval_every=int(5e3),
-        num_train_episodes=int(5e4)
-    )
-
-    # plots
-    plt.title("NFSP: " + output["game"], fontweight="bold")
-    plt.xlabel("Episodes", fontweight="bold")
-    plt.ylabel("Exploitability", fontweight="bold")
-    plt.plot(output["episodes"], output["exploitability"])
-    plt.loglog()
-    plt.savefig(paths.path_arnout
-                + 'nfsp_' + str(output["episodes"][-1]) + '_episodes'
-                + '.' + paths.type)
-    plt.show()
