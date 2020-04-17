@@ -75,7 +75,7 @@ class NFSPPolicies(policy.Policy):
 
 
 def main(unused_argv):
-  game = "kuhn_poker"
+  game = "leduc_poker"
   num_players = 2
 
   env_configs = {"players": num_players}
