@@ -43,10 +43,12 @@ def train_cfr(
 
 ) -> dict:
 
-  data = {}
-  data["players"] = players
-  data["game"] = game
-  data["exploitability"], data["iterations"] = [], []
+  data = {
+      "players": players,
+      "game": game,
+      "exploitability": [],
+      "iterations": []
+  }
 
   game = pyspiel.load_game(game, # FLAGS.game,
                            {"players": pyspiel.GameParameter(players)}) # FLAGS.players)})
@@ -69,8 +71,8 @@ if __name__ == "__main__":
     output = train_cfr(
         game="kuhn_poker",
         players=2,
-        print_freq=int(1e2),
-        iterations=int(1e3)
+        print_freq=int(1e3),
+        iterations=int(1e5)
     )
 
     # plots
