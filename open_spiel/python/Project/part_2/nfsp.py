@@ -75,7 +75,7 @@ def train_nfsp(
         epsilon_end=0.001,
         reservoir_buffer_capacity=int(2e6),
         anticipatory_param=0.1,
-        eval_every=int(1e4),
+        eval_every=int(1e4)
 ) -> dict:
 
     data = {
