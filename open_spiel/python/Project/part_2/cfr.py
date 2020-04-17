@@ -39,8 +39,7 @@ def train_cfr(
         game="kuhn_poker",
         players=2,
         iterations=int(1e4),
-        print_freq=int(1e3),
-
+        print_freq=int(1e3)
 ) -> dict:
 
   data = {
