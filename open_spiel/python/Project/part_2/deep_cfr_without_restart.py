@@ -20,10 +20,8 @@ import os
 # Disable all tensorflow warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow
-
 tensorflow.get_logger().setLevel('ERROR')
 import tensorflow.compat.v1 as tf
-
 from open_spiel.python import policy
 
 
@@ -71,22 +69,26 @@ def train_dcfr_modified(
         sess.run(tf.global_variables_initializer())
 
         for iteration in range(num_iterations):
-            _, advantage_losses, policy_loss = deep_cfr_solver.solve_one_iteration()
-            # for player, losses in six.iteritems(advantage_losses):
-                # print("Advantage for player %s: %s"
-                #      % (player, losses[:2] + ["..."] + losses[-2:]))
-                # print("Advantage Buffer Size for player %s: '%s'"
-                #      % (player, len(deep_cfr_solver.advantage_buffers[player])))
-            # print("Strategy Buffer Size: '%s'"
-            #      % len(deep_cfr_solver.strategy_buffer))
-            # print("Final policy loss: '%s'" % policy_loss)
-            conv = exploitability.nash_conv(
-                game,
-                policy.PolicyFromCallable(game, deep_cfr_solver.action_probabilities))
-            print("Number of iterations %s - NashConv: %s" % (iteration+1, conv))
+            if (iteration + 1) % eval_every == 0 or iteration == 0:
+                if iteration == 0:
+                    _, advantage_losses, policy_loss = deep_cfr_solver.solve_one_iteration()
+                elif (iteration + 1) % eval_every == 0:
+                    _, advantage_losses, policy_loss = deep_cfr_solver.solve_x_iterations(number_of_iterations=eval_every)
+                # for player, losses in six.iteritems(advantage_losses):
+                    # print("Advantage for player %s: %s"
+                    #      % (player, losses[:2] + ["..."] + losses[-2:]))
+                    # print("Advantage Buffer Size for player %s: '%s'"
+                    #      % (player, len(deep_cfr_solver.advantage_buffers[player])))
+                # print("Strategy Buffer Size: '%s'"
+                #      % len(deep_cfr_solver.strategy_buffer))
+                # print("Final policy loss: '%s'" % policy_loss)
+                conv = exploitability.nash_conv(
+                    game,
+                    policy.PolicyFromCallable(game, deep_cfr_solver.action_probabilities))
+                print("Number of iterations %s - NashConv: %s" % (iteration+1, conv))
 
-            # Store the data
-            data["exploitability"].append(conv)
-            data["iterations"].append(iteration+1)
+                # Store the data
+                data["exploitability"].append(conv)
+                data["iterations"].append(iteration+1)
     return data
 
