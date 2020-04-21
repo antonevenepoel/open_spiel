@@ -199,6 +199,6 @@ def calculate_store_plot_nfsp(
 if __name__ == "__main__":
     calculate_store_plot_nfsp(
         game="kuhn_poker",
-        num_train_episodes=int(1e5),
-        eval_every=int(5e3)
+        eval_every=int(5e3),
+        num_train_episodes=int(1e6)
     )
