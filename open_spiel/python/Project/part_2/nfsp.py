@@ -148,7 +148,6 @@ def train_nfsp(
                 logging.info("Losses: %s", losses)
                 expl = exploitability.exploitability(env.game, expl_policies_avg)
                 print("Exploitability AVG", ep+1, expl)
-                print("_____________________________________________")
                 # logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
                 # logging.info("_____________________________________________")
 
