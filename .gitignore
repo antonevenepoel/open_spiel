@@ -42,3 +42,4 @@ open_spiel/cmake-build-debug/
 
 # NOX
 .nox/
+open_spiel/python/Project/part_2/paths.py

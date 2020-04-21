@@ -85,14 +85,13 @@ def train_nfsp(
         learn_every=64,
         optimizer_str="sgd"
 ) -> dict:
-
     data = {
         "game": game,
         "players": num_players,
         "hidden_layers_sizes": hidden_layers_sizes,
         "replay_buffer_capacity": replay_buffer_capacity,
         "num_train_episodes": num_train_episodes,
-        "epsilon_start" : epsilon_start,
+        "epsilon_start": epsilon_start,
         "epsilon_end": epsilon_end,
         "reservoir_buffer_capacity": reservoir_buffer_capacity,
         "anticipatory_param": anticipatory_param,
@@ -142,19 +141,17 @@ def train_nfsp(
         ]
         expl_policies_avg = NFSPPolicies(env, agents, nfsp.MODE.average_policy)
         sess.run(tf.global_variables_initializer())
-        for ep in range(num_train_episodes):  # FLAGS.num_train_episodes):
-            if (ep+1) % eval_every == 0 or ep == 0:  # FLAGS.eval_every == 0:
+        for ep in range(num_train_episodes):
+            if (ep + 1) % eval_every == 0 or ep == 0:  # FLAGS.eval_every == 0:
                 losses = [agent.loss for agent in agents]
-                logging.info("Losses: %s", losses)
+                print("Losses: %s" % losses)
                 expl = exploitability.exploitability(env.game, expl_policies_avg)
-                print("Exploitability AVG", ep+1, expl)
-                # logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
-                # logging.info("_____________________________________________")
+                print("Exploitability AVG", ep + 1, expl)
 
-                # store info
+                # Store info
                 data["exploitability"].append(expl)
                 data["losses"].append(losses)
-                data["episodes"].append(ep+1)
+                data["episodes"].append(ep + 1)
 
             time_step = env.reset()
             while not time_step.last():
