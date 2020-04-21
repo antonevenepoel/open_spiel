@@ -4,6 +4,7 @@ from open_spiel.python.project.part_2.fp import train_fp
 from open_spiel.python.project.part_2.nfsp import train_nfsp
 from open_spiel.python.project.part_2.cfr import train_cfr
 from open_spiel.python.project.part_2.dcfr import train_dcfr
+from open_spiel.python.project.part_2.deep_cfr_without_restart import train_dcfr_modified
 
 import matplotlib.pyplot as plt
 from open_spiel.python.project.part_2 import paths
@@ -117,6 +118,68 @@ def calculate_store_plot_dcfr(
                 + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
                 + paths.plot_type)
     plt.show()
+
+
+def calculate_store_plot_dcfr_modified(
+        game_name,
+        eval_every=int(1e2),
+        num_iterations=int(1e3),
+        num_traversals=40,
+        policy_network_layers=(32, 32),
+        advantage_network_layers=(16, 16),
+        learning_rate=1e-3,
+        batch_size_advantage=None,
+        batch_size_strategy=None,
+        memory_capacity=1e5
+):
+    print("##### DCFR_Modified #####")
+    output = train_dcfr_modified(
+        game_name=game_name,
+        eval_every=eval_every,
+        num_iterations=num_iterations,
+        num_traversals=num_traversals,
+        policy_network_layers=policy_network_layers,
+        advantage_network_layers=advantage_network_layers,
+        learning_rate=learning_rate,
+        batch_size_advantage=batch_size_advantage,
+        batch_size_strategy=batch_size_strategy,
+        memory_capacity=memory_capacity
+    )
+
+    # Save data in txt-file
+    # Create meta data which is put in the header of the txt-files
+    dcfr_header = ""
+    for key, value in output.items():
+        if key not in ["iterations", "exploitability"]:
+            dcfr_header += f"{key}: {value} \n"
+    # Iterations
+    np.savetxt(
+        fname=paths.data_path + "dcfr_" + str(
+            output["iterations"][-1]) + "_iterations_ITER" + paths.data_type,
+        header=dcfr_header,
+        X=output["iterations"],
+        delimiter=","
+    )
+    # Exploitability
+    np.savetxt(
+        fname=paths.data_path + "dcfr_" + str(
+            output["iterations"][-1]) + "_iterations_EXPL" + paths.data_type,
+        header=dcfr_header,
+        X=output["exploitability"],
+        delimiter=","
+    )
+
+    # Plots
+    plt.title("DCFR: " + output["game"], fontweight="bold")
+    plt.xlabel("Iterations", fontweight="bold")
+    plt.ylabel("Exploitability", fontweight="bold")
+    plt.plot(output["iterations"], output["exploitability"])
+    plt.loglog()
+    plt.savefig(paths.plot_path
+                + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
+                + paths.plot_type)
+    plt.show()
+
 
 
 def calculate_store_plot_fp(
@@ -253,9 +316,9 @@ def calculate_store_plot_nfsp(
 
 
 if __name__ == "__main__":
-    calculate_store_plot_dcfr(
+    calculate_store_plot_dcfr_modified(
         game_name="kuhn_poker",
         eval_every=int(1e1),
-        num_iterations=int(1e2),
-        num_traversals=40,
+        num_iterations=int(1e3),
+        num_traversals=100,
     )
