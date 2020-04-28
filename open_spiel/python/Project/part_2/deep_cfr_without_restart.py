@@ -35,7 +35,7 @@ def train_dcfr_modified(
         learning_rate=1e-3,
         batch_size_advantage=None,
         batch_size_strategy=None,
-        memory_capacity=1e2
+        memory_capacity=1e7
 ):
     data = {
         "game": game_name,

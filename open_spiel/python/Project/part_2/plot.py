@@ -323,7 +323,7 @@ def calculate_store_plot_nfsp(
 if __name__ == "__main__":
     calculate_store_plot_dcfr_modified(
         game_name="kuhn_poker",
-        eval_every=int(1e2),
-        num_iterations=int(1e3),
-        num_traversals=10,
+        eval_every=int(1e3),
+        num_iterations=int(1e4),
+        num_traversals=40,
     )
