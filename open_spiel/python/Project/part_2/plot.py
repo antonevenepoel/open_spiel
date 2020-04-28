@@ -3,7 +3,7 @@ import numpy as np
 from open_spiel.python.project.part_2.fp import train_fp
 from open_spiel.python.project.part_2.nfsp import train_nfsp
 from open_spiel.python.project.part_2.cfr import train_cfr
-from open_spiel.python.project.part_2.dcfr import train_dcfr
+from open_spiel.python.project.part_2.deep_cfr import train_dcfr
 from open_spiel.python.project.part_2.deep_cfr_without_restart import train_dcfr_modified
 
 import os
@@ -68,6 +68,7 @@ def calculate_store_plot_cfr(
     plt.ylabel("Exploitability", fontweight="bold")
     plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
+
     plt.savefig(path)
     plt.show()
 
@@ -129,7 +130,8 @@ def calculate_store_plot_dcfr(
     plt.loglog()
     plt.savefig(paths.plot_path
                 + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
-                + paths.plot_type)
+                + paths.plot_type,
+                bbox_inches="tight")
     plt.show()
 
 
@@ -193,7 +195,9 @@ def calculate_store_plot_dcfr_modified(
     plt.ylabel("Exploitability", fontweight="bold")
     plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
+
     plt.savefig(path)
+
     plt.show()
 
 
@@ -245,7 +249,8 @@ def calculate_store_plot_fp(
     plt.loglog()
     plt.savefig(paths.plot_path
                 + 'fp_' + str(output["iterations"][-1] // int(1e3)) + 'k_iterations'
-                + paths.plot_type)
+                + paths.plot_type,
+                bbox_inches="tight")
     plt.show()
 
 
@@ -327,7 +332,8 @@ def calculate_store_plot_nfsp(
     plt.loglog()
     plt.savefig(paths.plot_path
                 + "nfsp_" + str(output["episodes"][-1] // int(1e3)) + "k_episodes"
-                + paths.plot_type)
+                + paths.plot_type,
+                bbox_inches="tight")
     plt.show()
 
 
@@ -339,4 +345,5 @@ if __name__ == "__main__":
         num_traversals=100,
         policy_network_layers=(32, 32),
         advantage_network_layers=(16, 16),
+
     )

@@ -1,0 +1,22 @@
+# game: kuhn_poker 
+# eval_every: 100 
+# num_iterations: 1000 
+# num_traversals: 10 
+# policy_network_layers: (32, 32) 
+# advantage_network_layers: (16, 16) 
+# learning_rate: 0.001 
+# batch_size_advantage: None 
+# batch_size_strategy: None 
+# memory_capacity: 100000.0 
+# 
+9.830135965231221462e-01
+9.837143215719861278e-01
+9.844304596884182468e-01
+9.852598321333085885e-01
+9.863180908544091352e-01
+9.873084966859029254e-01
+9.884323666609102776e-01
+9.899512741062796994e-01
+9.919073319383806542e-01
+9.933849205450275832e-01
+9.947337397184138341e-01

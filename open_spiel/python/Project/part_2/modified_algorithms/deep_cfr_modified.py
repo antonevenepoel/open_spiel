@@ -269,6 +269,21 @@ class DeepCFRSolver(policy.Policy):
         policy_loss = self._learn_strategy_network()
         return self._policy_network, advantage_losses, policy_loss
 
+    def solve_x_iterations(self, number_of_iterations):
+        """Solution logic for Deep CFR."""
+        advantage_losses = collections.defaultdict(list)
+        for _ in range(number_of_iterations):
+            for p in range(self._num_players):
+                for _ in range(self._num_traversals):
+                    self._traverse_game_tree(self._root_node, p)
+                self.reinitialize_advantage_networks()
+                # Re-initialize advantage networks and train from scratch.
+                advantage_losses[p].append(self._learn_advantage_network(p))
+            self._iteration += 1
+        # Train policy network.
+        policy_loss = self._learn_strategy_network()
+        return self._policy_network, advantage_losses, policy_loss
+
     def _traverse_game_tree(self, state, player):
         """Performs a traversal of the game tree.
 
