@@ -27,17 +27,22 @@ from open_spiel.python.algorithms import exploitability
 import pyspiel
 import matplotlib.pyplot as plt
 
+from open_spiel.python.algorithms.cfr import _CFRSolver
+
 # FLAGS = flags.FLAGS
 
 # flags.DEFINE_integer("iterations", 100, "Number of iterations")
 # flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
 # flags.DEFINE_integer("players", 2, "Number of players")
 # flags.DEFINE_integer("print_freq", 10, "How often to print the exploitability")
-from open_spiel.python.project.part_2 import paths
+from open_spiel.python.project.part_2 import path_file
 
 
 def train_cfr(
-        game="kuhn_poker",
+        game,
+        regret_matching_plus,
+        alternating_updates,
+        linear_averaging,
         players=2,
         iterations=int(1e4),
         print_freq=int(1e3)
@@ -45,14 +50,22 @@ def train_cfr(
     data = {
         "players": players,
         "game": game,
+        "regret_matching_plus": regret_matching_plus,
+        "alternating_updates": alternating_updates,
+        "linear_averaging": linear_averaging,
         "print_freq": print_freq,
         "exploitability": [],
         "iterations": []
     }
 
-    game = pyspiel.load_game(game,  # FLAGS.game,
-                             {"players": pyspiel.GameParameter(players)})  # FLAGS.players)})
-    cfr_solver = cfr.CFRSolver(game)
+    game = pyspiel.load_game(game,
+                             {"players": pyspiel.GameParameter(players)})
+    cfr_solver = _CFRSolver(
+        game=game,
+        linear_averaging=linear_averaging,
+        regret_matching_plus=regret_matching_plus,
+        alternating_updates=alternating_updates
+    )
     for i in range(iterations):  # FLAGS.iterations):
         cfr_solver.evaluate_and_update_policy()
         if (i + 1) % print_freq == 0 or i == 0:  # FLAGS.print_freq == 0:

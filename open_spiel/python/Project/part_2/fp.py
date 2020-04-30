@@ -28,7 +28,7 @@ from open_spiel.python import policy
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import fictitious_play
 import pyspiel
-from open_spiel.python.project.part_2 import paths
+from open_spiel.python.project.part_2 import path_file
 import matplotlib.pyplot as plt
 
 

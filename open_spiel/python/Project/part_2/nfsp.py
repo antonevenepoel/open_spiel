@@ -35,7 +35,7 @@ from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
 import matplotlib.pyplot as plt
-from open_spiel.python.project.part_2 import paths
+from open_spiel.python.project.part_2 import path_file
 
 
 class NFSPPolicies(policy.Policy):
