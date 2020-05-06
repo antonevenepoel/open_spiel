@@ -38,8 +38,8 @@ plt.ylabel("Exploitability", fontweight="bold")
 plt.loglog()
 plt.legend()
 plt.title("Comparison of individual CFR+ adjustments to CFR in Leduc poker", fontweight="bold")
-plt.savefig(path_file.plot_path
-            + "cfr_adjustments"
-            + path_file.plot_type,
-            bbox_inches="tight")
+# plt.savefig(path_file.plot_path
+#            + "cfr_adjustments"
+#            + path_file.plot_type,
+#            bbox_inches="tight")
 plt.show()

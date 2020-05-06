@@ -1,10 +1,8 @@
-import numpy as np
-
-from open_spiel.python.project.part_2.fp import train_fp
-from open_spiel.python.project.part_2.nfsp import train_nfsp
-from open_spiel.python.project.part_2.cfr import train_cfr
-from open_spiel.python.project.part_2.deep_cfr import train_dcfr
-from open_spiel.python.project.part_2.deep_cfr_without_restart import train_dcfr_modified
+from open_spiel.python.project.part_2.algorithms.fp import train_fp
+from open_spiel.python.project.part_2.algorithms.nfsp import train_nfsp
+from open_spiel.python.project.part_2.algorithms.cfr import train_cfr
+from open_spiel.python.project.part_2.algorithms.deep_cfr import train_dcfr
+from open_spiel.python.project.part_2.algorithms.deep_cfr_without_restart import train_dcfr_modified
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -40,7 +38,7 @@ def calculate_store_plot_cfr(
             cfr_header += f"{key}: {value} \n"
     # Iterations
     path = establish_path(path_file.data_path + "cfr_" + str(
-        output["iterations"][-1] // int(1e3)) + "k_iterations_ITER", path_file.data_type)
+        output["iterations"][-1] // int(1e3)) + "k_iterations_ITER_" + str(game), path_file.data_type)
     np.savetxt(
         fname=path,
         header=cfr_header,
@@ -49,7 +47,7 @@ def calculate_store_plot_cfr(
     )
     # Exploitability
     path = establish_path(path_file.data_path + "cfr_" + str(
-        output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL", path_file.data_type)
+        output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL_" + str(game), path_file.data_type)
     np.savetxt(
         fname=path,
         header=cfr_header,
@@ -59,7 +57,7 @@ def calculate_store_plot_cfr(
 
     # Plots
     path = establish_path(path_file.plot_path
-                          + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations", path_file.plot_type)
+                          + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations_" + str(game), path_file.plot_type)
     plt.title("CFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
     plt.ylabel("Exploitability", fontweight="bold")
@@ -336,9 +334,9 @@ def calculate_store_plot_nfsp(
 if __name__ == "__main__":
     calculate_store_plot_cfr(
         game="leduc_poker",
-        linear_averaging=True,
-        alternating_updates=True,
-        regret_matching_plus=True,
+        linear_averaging=False,
+        alternating_updates=False,
+        regret_matching_plus=False,
         print_freq=1,
         iterations=int(1e4)
     )
