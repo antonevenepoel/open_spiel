@@ -8,7 +8,7 @@ import pyspiel
 import six
 from absl import app
 
-from open_spiel.python.project.part_2.modified_algorithms import deep_cfr_modified_solver
+from open_spiel.python.project.part_2.modified_solvers import deep_cfr_modified_solver
 from open_spiel.python.algorithms import exploitability
 
 import collections

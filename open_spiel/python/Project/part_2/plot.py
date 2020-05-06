@@ -15,9 +15,10 @@ def calculate_store_plot_cfr(
         regret_matching_plus,
         alternating_updates,
         linear_averaging,
-        players=2,
-        print_freq=int(1e2),
-        iterations=int(1e3),
+        average_policy,
+        print_freq,
+        iterations,
+        players=2
 ):
     print("##### CFR #####")
     output = train_cfr(
@@ -25,6 +26,7 @@ def calculate_store_plot_cfr(
         players=players,
         print_freq=print_freq,
         iterations=iterations,
+        average_policy=average_policy,
         regret_matching_plus=regret_matching_plus,
         alternating_updates=alternating_updates,
         linear_averaging=linear_averaging
@@ -333,12 +335,13 @@ def calculate_store_plot_nfsp(
 
 if __name__ == "__main__":
     calculate_store_plot_cfr(
-        game="leduc_poker",
-        linear_averaging=False,
-        alternating_updates=False,
-        regret_matching_plus=False,
+        game="kuhn_poker",
+        linear_averaging=True,
+        alternating_updates=True,
+        regret_matching_plus=True,
+        average_policy=True,
         print_freq=1,
-        iterations=int(1e4)
+        iterations=int(1e3)
     )
 
 
