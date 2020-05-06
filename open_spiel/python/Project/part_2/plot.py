@@ -335,13 +335,13 @@ def calculate_store_plot_nfsp(
 
 if __name__ == "__main__":
     calculate_store_plot_cfr(
-        game="kuhn_poker",
+        game="leduc_poker",
         linear_averaging=True,
         alternating_updates=True,
         regret_matching_plus=True,
         average_policy=True,
         print_freq=1,
-        iterations=int(1e3)
+        iterations=int(1e1)
     )
 
 
