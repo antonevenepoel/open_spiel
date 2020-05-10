@@ -22,7 +22,7 @@ def calculate_store_plot_cfr(
 ):
     print("##### CFR #####")
     output = train_cfr(
-        game=game,
+        game_name=game,
         players=players,
         print_freq=print_freq,
         iterations=iterations,
@@ -38,6 +38,8 @@ def calculate_store_plot_cfr(
     for key, value in output.items():
         if key not in ["iterations", "exploitability"]:
             cfr_header += f"{key}: {value} \n"
+        elif key == "iterations" or key == "exploitability":
+            cfr_header += f"{key}: {value[-1]} \n"
     # Iterations
     path = establish_path(path_file.data_path + "cfr_" + str(
         output["iterations"][-1] // int(1e3)) + "k_iterations_ITER_" + str(game), path_file.data_type)
@@ -62,8 +64,8 @@ def calculate_store_plot_cfr(
                           + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations_" + str(game), path_file.plot_type)
     plt.title("CFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
-    plt.ylabel("Exploitability", fontweight="bold")
-    plt.plot(output["iterations"], output["exploitability"])
+    plt.ylabel("Exploitability (mbb)", fontweight="bold")
+    plt.plot(output["iterations"], [i * 1000 for i in output["exploitability"]])
     plt.loglog()
 
     plt.savefig(path)
@@ -339,9 +341,9 @@ if __name__ == "__main__":
         linear_averaging=True,
         alternating_updates=True,
         regret_matching_plus=True,
-        average_policy=True,
+        average_policy=False,
         print_freq=1,
-        iterations=int(1e1)
+        iterations=int(1e3)
     )
 
 
