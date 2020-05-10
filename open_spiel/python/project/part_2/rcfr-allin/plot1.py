@@ -416,30 +416,30 @@ def calculate_store_plot_rcfr(
 
 
 if __name__ == "__main__":
-    calculate_store_plot_dcfr_modified(
-        game_name="kuhn_poker",
-        eval_every=int(1e1),
-        num_iterations=int(1000),
-        num_traversals=1000,
-        policy_network_layers=(16,16),
-        advantage_network_layers=(16,16),
-        learning_rate=1e-2,
-        memory_capacity=1e7,
-        batch_size_advantage=None,
-        batch_size_strategy=None
-    )
-
-    # calculate_store_plot_rcfr(
-    #     game_name="leduc_poker",
-    #     eval_every= int(1),
-    #     num_iterations=int(3 ),
-    #     num_hidden_layers=int(3),
-    #     num_hidden_units=int(50),
-    #     num_hidden_factors=int(0),
-    #     batch_size = int(1000),
-    #     buffer_size=int(-1),
-    #     bootstrap=False,
+    # calculate_store_plot_dcfr_modified(
+    #     game_name="kuhn_poker",
+    #     eval_every=int(1e1),
+    #     num_iterations=int(1000),
+    #     num_traversals=1000,
+    #     policy_network_layers=(16,16),
+    #     advantage_network_layers=(16,16),
+    #     learning_rate=1e-2,
+    #     memory_capacity=1e7,
+    #     batch_size_advantage=None,
+    #     batch_size_strategy=None
     # )
+
+    calculate_store_plot_rcfr(
+        game_name="leduc_poker",
+        eval_every= int(1),
+        num_iterations=int(1000),
+        num_hidden_layers=int(2),
+        num_hidden_units=int(50),
+        num_hidden_factors=int(0),
+        batch_size=int(5000),
+        buffer_size=int(-1),
+        bootstrap=True,
+    )
 
     # calculate_store_plot_cfr(
     #     game ="leduc_poker",
