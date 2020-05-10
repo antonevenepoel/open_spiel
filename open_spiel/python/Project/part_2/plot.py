@@ -1,8 +1,13 @@
+
+import numpy as np
+
+
 from open_spiel.python.project.part_2.algorithms.fp import train_fp
 from open_spiel.python.project.part_2.algorithms.nfsp import train_nfsp
 from open_spiel.python.project.part_2.algorithms.cfr import train_cfr
 from open_spiel.python.project.part_2.algorithms.deep_cfr import train_dcfr
 from open_spiel.python.project.part_2.algorithms.deep_cfr_without_restart import train_dcfr_modified
+from open_spiel.python.project.part_2.algorithms.rcfr import train_rcfr
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -335,6 +340,83 @@ def calculate_store_plot_nfsp(
     plt.show()
 
 
+
+
+def calculate_store_plot_rcfr(
+        game_name="kuhn_poker",
+        eval_every=int(1e2),
+        num_iterations=int(1e3),
+        num_players=2,
+        bootstrap=False,
+        truncate_negative=False,
+        buffer_size=-1,
+        num_hidden_layers=1,
+        num_hidden_units=13,
+        num_hidden_factors=8,
+        use_skip_connections=True,
+        num_epochs=200,
+        batch_size=100,
+        step_size=0.01
+):
+    print("##### RCFR #####")
+    output = train_rcfr(
+        game_name=game_name,
+        eval_every=eval_every,
+        num_iterations=num_iterations,
+        num_players=num_players,
+        bootstrap=bootstrap,
+        truncate_negative=truncate_negative,
+        buffer_size=buffer_size,
+        num_hidden_layers=num_hidden_layers,
+        num_hidden_units=num_hidden_units,
+        num_hidden_factors=num_hidden_factors,
+        use_skip_connections=use_skip_connections,
+        num_epochs=num_epochs,
+        batch_size=batch_size,
+        step_size=step_size
+    )
+    #########################
+    # Save data in txt-file #
+    #########################
+    # Create meta data which is put in the header of the txt-files
+    rcfr_header = ""
+    for key, value in output.items():
+        if key not in ["iterations", "exploitability"]:
+            rcfr_header += f"{key}: {value} \n"
+    # Iterations
+    path = establish_path(path_file.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_ITER",  path_file.data_type)
+    np.savetxt(
+        fname= path ,
+        header=rcfr_header,
+        X=output["iterations"],
+        delimiter=","
+    )
+    # Exploitability
+    path= establish_path(path_file.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_EXPL",  path_file.data_type)
+    np.savetxt(
+        fname=path,
+        header=rcfr_header,
+        X=output["exploitability"],
+        delimiter=","
+    )
+
+    # Plots
+    intermediary_path = path_file.plot_path + "rcfr_" + str(output["iterations"][-1]) + "_iterations"
+    path = establish_path(intermediary_path, path_file.plot_type)
+    print(path)
+    plt.title("RCFR: " + output["game"], fontweight="bold")
+    plt.xlabel("Iterations", fontweight="bold")
+    plt.ylabel("Exploitability", fontweight="bold")
+    plt.plot(output["iterations"], output["exploitability"])
+    plt.loglog()
+
+    plt.savefig(path)
+
+    plt.show()
+
+
 if __name__ == "__main__":
     calculate_store_plot_cfr(
         game="leduc_poker",
@@ -343,8 +425,6 @@ if __name__ == "__main__":
         regret_matching_plus=True,
         average_policy=False,
         print_freq=1,
-        iterations=int(1e3)
-    )
-
+        iterations=int(1e3))
 
 

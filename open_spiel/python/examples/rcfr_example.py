@@ -30,7 +30,7 @@ tf.enable_eager_execution()
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("iterations", 100, "Number of iterations")
-flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
+flags.DEFINE_string("game", "leduc_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("print_freq", 10, "How often to print the exploitability")
 flags.DEFINE_boolean("bootstrap", False,
@@ -41,7 +41,7 @@ flags.DEFINE_integer(
     "buffer_size", -1,
     "A reservoir buffer size. A non-positive size implies an effectively "
     "infinite buffer.")
-flags.DEFINE_integer("num_hidden_layers", 1,
+flags.DEFINE_integer("num_hidden_layers", 2,
                      "The number of hidden layers in the regret model.")
 flags.DEFINE_integer("num_hidden_units", 13,
                      "The number of hidden layers in the regret model.")
