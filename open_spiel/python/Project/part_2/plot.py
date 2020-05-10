@@ -1,39 +1,40 @@
+
 import numpy as np
 
-from open_spiel.python.project.part_2.fp import train_fp
-from open_spiel.python.project.part_2.nfsp import train_nfsp
-from open_spiel.python.project.part_2.cfr import train_cfr
-from open_spiel.python.project.part_2.deep_cfr import train_dcfr
-from open_spiel.python.project.part_2.deep_cfr_without_restart import train_dcfr_modified
-from open_spiel.python.project.part_2.rcfr import train_rcfr
 
-import os
+from open_spiel.python.project.part_2.algorithms.fp import train_fp
+from open_spiel.python.project.part_2.algorithms.nfsp import train_nfsp
+from open_spiel.python.project.part_2.algorithms.cfr import train_cfr
+from open_spiel.python.project.part_2.algorithms.deep_cfr import train_dcfr
+from open_spiel.python.project.part_2.algorithms.deep_cfr_without_restart import train_dcfr_modified
+from open_spiel.python.project.part_2.algorithms.rcfr import train_rcfr
+
 import matplotlib.pyplot as plt
-from open_spiel.python.project.part_2 import paths
+import numpy as np
+from open_spiel.python.project.part_2 import path_file
+from open_spiel.python.project.part_2.path_file import establish_path
 
-
-def establish_path(path, type):
-    i = 0
-    if os.path.isfile(path + type):
-        path = path + str(i)
-        i += 1
-    while(os.path.isfile(path + type)):
-        path = path[:len(path)-1] + str(i)
-        i += 1
-    return path + type
 
 def calculate_store_plot_cfr(
         game,
-        players=2,
-        print_freq=int(1e2),
-        iterations=int(1e3)
+        regret_matching_plus,
+        alternating_updates,
+        linear_averaging,
+        average_policy,
+        print_freq,
+        iterations,
+        players=2
 ):
     print("##### CFR #####")
     output = train_cfr(
         game=game,
         players=players,
         print_freq=print_freq,
-        iterations=iterations
+        iterations=iterations,
+        average_policy=average_policy,
+        regret_matching_plus=regret_matching_plus,
+        alternating_updates=alternating_updates,
+        linear_averaging=linear_averaging
     )
 
     # Save data in txt-file
@@ -43,27 +44,27 @@ def calculate_store_plot_cfr(
         if key not in ["iterations", "exploitability"]:
             cfr_header += f"{key}: {value} \n"
     # Iterations
-    path = establish_path(paths.data_path + "cfr_" + str(
-            output["iterations"][-1] // int(1e3)) + "k_iterations_ITER",paths.data_type )
+    path = establish_path(path_file.data_path + "cfr_" + str(
+        output["iterations"][-1] // int(1e3)) + "k_iterations_ITER_" + str(game), path_file.data_type)
     np.savetxt(
-        fname= path,
+        fname=path,
         header=cfr_header,
         X=output["iterations"],
         delimiter=","
     )
     # Exploitability
-    path = establish_path(paths.data_path + "cfr_" + str(
-            output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL", paths.data_type)
+    path = establish_path(path_file.data_path + "cfr_" + str(
+        output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL_" + str(game), path_file.data_type)
     np.savetxt(
-        fname= path,
+        fname=path,
         header=cfr_header,
         X=output["exploitability"],
         delimiter=","
     )
 
     # Plots
-    path = establish_path(paths.plot_path
-                + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations", paths.plot_type)
+    path = establish_path(path_file.plot_path
+                          + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations_" + str(game), path_file.plot_type)
     plt.title("CFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
     plt.ylabel("Exploitability", fontweight="bold")
@@ -108,16 +109,16 @@ def calculate_store_plot_dcfr(
             dcfr_header += f"{key}: {value} \n"
     # Iterations
     np.savetxt(
-        fname=paths.data_path + "dcfr_" + str(
-            output["iterations"][-1]) + "_iterations_ITER" + paths.data_type,
+        fname=path_file.data_path + "dcfr_" + str(
+            output["iterations"][-1]) + "_iterations_ITER" + path_file.data_type,
         header=dcfr_header,
         X=output["iterations"],
         delimiter=","
     )
     # Exploitability
     np.savetxt(
-        fname=paths.data_path + "dcfr_" + str(
-            output["iterations"][-1]) + "_iterations_EXPL" + paths.data_type,
+        fname=path_file.data_path + "dcfr_" + str(
+            output["iterations"][-1]) + "_iterations_EXPL" + path_file.data_type,
         header=dcfr_header,
         X=output["exploitability"],
         delimiter=","
@@ -129,9 +130,9 @@ def calculate_store_plot_dcfr(
     plt.ylabel("Exploitability", fontweight="bold")
     plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
-    plt.savefig(paths.plot_path
+    plt.savefig(path_file.plot_path
                 + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
-                + paths.plot_type,
+                + path_file.plot_type,
                 bbox_inches="tight")
     plt.show()
 
@@ -169,17 +170,17 @@ def calculate_store_plot_dcfr_modified(
         if key not in ["iterations", "exploitability"]:
             dcfr_header += f"{key}: {value} \n"
     # Iterations
-    path = establish_path(paths.data_path + "dcfr_" + str(
-            output["iterations"][-1]) + "_iterations_ITER",  paths.data_type)
+    path = establish_path(path_file.data_path + "dcfr_" + str(
+        output["iterations"][-1]) + "_iterations_ITER", path_file.data_type)
     np.savetxt(
-        fname= path ,
+        fname=path,
         header=dcfr_header,
         X=output["iterations"],
         delimiter=","
     )
     # Exploitability
-    path= establish_path(paths.data_path + "dcfr_" + str(
-            output["iterations"][-1]) + "_iterations_EXPL",  paths.data_type)
+    path = establish_path(path_file.data_path + "dcfr_" + str(
+        output["iterations"][-1]) + "_iterations_EXPL", path_file.data_type)
     np.savetxt(
         fname=path,
         header=dcfr_header,
@@ -188,8 +189,8 @@ def calculate_store_plot_dcfr_modified(
     )
 
     # Plots
-    intermediary_path = paths.plot_path + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
-    path = establish_path(intermediary_path, paths.plot_type)
+    intermediary_path = path_file.plot_path + "dcfr_" + str(output["iterations"][-1]) + "_iterations"
+    path = establish_path(intermediary_path, path_file.plot_type)
     print(path)
     plt.title("DCFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
@@ -200,7 +201,6 @@ def calculate_store_plot_dcfr_modified(
     plt.savefig(path)
 
     plt.show()
-
 
 
 def calculate_store_plot_fp(
@@ -226,16 +226,16 @@ def calculate_store_plot_fp(
             fp_header += f"{key}: {value} \n"
     # Iterations
     np.savetxt(
-        fname=paths.data_path + "fp_" + str(
-            output["iterations"][-1] // int(1e3)) + "k_iterations_ITER" + paths.data_type,
+        fname=path_file.data_path + "fp_" + str(
+            output["iterations"][-1] // int(1e3)) + "k_iterations_ITER" + path_file.data_type,
         header=fp_header,
         X=output["iterations"],
         delimiter=","
     )
     # Exploitability
     np.savetxt(
-        fname=paths.data_path + "fp_" + str(
-            output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL" + paths.data_type,
+        fname=path_file.data_path + "fp_" + str(
+            output["iterations"][-1] // int(1e3)) + "k_iterations_EXPL" + path_file.data_type,
         header=fp_header,
         X=output["exploitability"],
         delimiter=","
@@ -248,9 +248,9 @@ def calculate_store_plot_fp(
     plt.ylabel("Exploitability", fontweight="bold")
     plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
-    plt.savefig(paths.plot_path
+    plt.savefig(path_file.plot_path
                 + 'fp_' + str(output["iterations"][-1] // int(1e3)) + 'k_iterations'
-                + paths.plot_type,
+                + path_file.plot_type,
                 bbox_inches="tight")
     plt.show()
 
@@ -302,16 +302,16 @@ def calculate_store_plot_nfsp(
             nfsp_header += f"{key}: {value} \n"
     # Episodes
     np.savetxt(
-        fname=paths.data_path + "nfsp_" + str(
-            output["episodes"][-1] // int(1e3)) + "k_episodes_EPI" + paths.data_type,
+        fname=path_file.data_path + "nfsp_" + str(
+            output["episodes"][-1] // int(1e3)) + "k_episodes_EPI" + path_file.data_type,
         header=nfsp_header,
         X=output["episodes"],
         delimiter=","
     )
     # Exploitability
     np.savetxt(
-        fname=paths.data_path + "nfsp_" + str(
-            output["episodes"][-1] // int(1e3)) + "k_episodes_EXPL" + paths.data_type,
+        fname=path_file.data_path + "nfsp_" + str(
+            output["episodes"][-1] // int(1e3)) + "k_episodes_EXPL" + path_file.data_type,
         header=nfsp_header,
         X=output["exploitability"],
         delimiter=",")
@@ -331,11 +331,12 @@ def calculate_store_plot_nfsp(
     plt.ylabel("Exploitability", fontweight="bold")
     plt.plot(output["episodes"], output["exploitability"])
     plt.loglog()
-    plt.savefig(paths.plot_path
+    plt.savefig(path_file.plot_path
                 + "nfsp_" + str(output["episodes"][-1] // int(1e3)) + "k_episodes"
-                + paths.plot_type,
+                + path_file.plot_type,
                 bbox_inches="tight")
     plt.show()
+
 
 
 
@@ -381,8 +382,8 @@ def calculate_store_plot_rcfr(
         if key not in ["iterations", "exploitability"]:
             rcfr_header += f"{key}: {value} \n"
     # Iterations
-    path = establish_path(paths.data_path + "rcfr_" + str(
-            output["iterations"][-1]) + "_iterations_ITER",  paths.data_type)
+    path = establish_path(path_file.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_ITER",  path_file.data_type)
     np.savetxt(
         fname= path ,
         header=rcfr_header,
@@ -390,8 +391,8 @@ def calculate_store_plot_rcfr(
         delimiter=","
     )
     # Exploitability
-    path= establish_path(paths.data_path + "rcfr_" + str(
-            output["iterations"][-1]) + "_iterations_EXPL",  paths.data_type)
+    path= establish_path(path_file.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_EXPL",  path_file.data_type)
     np.savetxt(
         fname=path,
         header=rcfr_header,
@@ -400,8 +401,8 @@ def calculate_store_plot_rcfr(
     )
 
     # Plots
-    intermediary_path = paths.plot_path + "rcfr_" + str(output["iterations"][-1]) + "_iterations"
-    path = establish_path(intermediary_path, paths.plot_type)
+    intermediary_path = path_file.plot_path + "rcfr_" + str(output["iterations"][-1]) + "_iterations"
+    path = establish_path(intermediary_path, path_file.plot_type)
     print(path)
     plt.title("RCFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
@@ -431,7 +432,7 @@ if __name__ == "__main__":
     calculate_store_plot_rcfr(
         game_name="leduc_poker",
         eval_every= int(1),
-        num_iterations=int(500),
+        num_iterations=int(3 ),
         num_hidden_layers=int(2),
         num_hidden_units=int(100),
         num_hidden_factors=int(0),
@@ -449,3 +450,14 @@ if __name__ == "__main__":
     #     print_freq=int(1e1),
     #     iterations=int(1e3)
     # )
+
+    # calculate_store_plot_cfr(
+    #     game="leduc_poker",
+    #     linear_averaging=True,
+    #     alternating_updates=True,
+    #     regret_matching_plus=True,
+    #     average_policy=True,
+    #     print_freq=1,
+    #     iterations=int(1e1)
+    # )
+
