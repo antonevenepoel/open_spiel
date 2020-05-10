@@ -5,6 +5,7 @@ from open_spiel.python.project.part_2.nfsp import train_nfsp
 from open_spiel.python.project.part_2.cfr import train_cfr
 from open_spiel.python.project.part_2.deep_cfr import train_dcfr
 from open_spiel.python.project.part_2.deep_cfr_without_restart import train_dcfr_modified
+from open_spiel.python.project.part_2.rcfr import train_rcfr
 
 import os
 import matplotlib.pyplot as plt
@@ -337,13 +338,114 @@ def calculate_store_plot_nfsp(
     plt.show()
 
 
-if __name__ == "__main__":
-    calculate_store_plot_dcfr_modified(
-        game_name="kuhn_poker",
-        eval_every=int(1e1),
-        num_iterations=int(1e1),
-        num_traversals=100,
-        policy_network_layers=(32, 32),
-        advantage_network_layers=(16, 16),
 
+def calculate_store_plot_rcfr(
+        game_name="kuhn_poker",
+        eval_every=int(1e2),
+        num_iterations=int(1e3),
+        num_players=2,
+        bootstrap=False,
+        truncate_negative=False,
+        buffer_size=-1,
+        num_hidden_layers=1,
+        num_hidden_units=13,
+        num_hidden_factors=8,
+        use_skip_connections=True,
+        num_epochs=200,
+        batch_size=100,
+        step_size=0.01
+):
+    print("##### RCFR #####")
+    output = train_rcfr(
+        game_name=game_name,
+        eval_every=eval_every,
+        num_iterations=num_iterations,
+        num_players=num_players,
+        bootstrap=bootstrap,
+        truncate_negative=truncate_negative,
+        buffer_size=buffer_size,
+        num_hidden_layers=num_hidden_layers,
+        num_hidden_units=num_hidden_units,
+        num_hidden_factors=num_hidden_factors,
+        use_skip_connections=use_skip_connections,
+        num_epochs=num_epochs,
+        batch_size=batch_size,
+        step_size=step_size
     )
+    #########################
+    # Save data in txt-file #
+    #########################
+    # Create meta data which is put in the header of the txt-files
+    rcfr_header = ""
+    for key, value in output.items():
+        if key not in ["iterations", "exploitability"]:
+            rcfr_header += f"{key}: {value} \n"
+    # Iterations
+    path = establish_path(paths.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_ITER",  paths.data_type)
+    np.savetxt(
+        fname= path ,
+        header=rcfr_header,
+        X=output["iterations"],
+        delimiter=","
+    )
+    # Exploitability
+    path= establish_path(paths.data_path + "rcfr_" + str(
+            output["iterations"][-1]) + "_iterations_EXPL",  paths.data_type)
+    np.savetxt(
+        fname=path,
+        header=rcfr_header,
+        X=output["exploitability"],
+        delimiter=","
+    )
+
+    # Plots
+    intermediary_path = paths.plot_path + "rcfr_" + str(output["iterations"][-1]) + "_iterations"
+    path = establish_path(intermediary_path, paths.plot_type)
+    print(path)
+    plt.title("RCFR: " + output["game"], fontweight="bold")
+    plt.xlabel("Iterations", fontweight="bold")
+    plt.ylabel("Exploitability", fontweight="bold")
+    plt.plot(output["iterations"], output["exploitability"])
+    plt.loglog()
+
+    plt.savefig(path)
+
+    plt.show()
+
+
+if __name__ == "__main__":
+    # calculate_store_plot_dcfr_modified(
+    #     game_name="kuhn_poker",
+    #     eval_every=int(1e1),
+    #     num_iterations=int(1000),
+    #     num_traversals=1000,
+    #     policy_network_layers=(16,16),
+    #     advantage_network_layers=(16,16),
+    #     learning_rate=1e-2,
+    #     memory_capacity=1e7,
+    #     batch_size_advantage=None,
+    #     batch_size_strategy=None
+    # )
+
+    calculate_store_plot_rcfr(
+        game_name="leduc_poker",
+        eval_every= int(1),
+        num_iterations=int(500),
+        num_hidden_layers=int(2),
+        num_hidden_units=int(100),
+        num_hidden_factors=int(0),
+    )
+
+    # calculate_store_plot_cfr(
+    #     game ="leduc_poker",
+    #     players=2,
+    #     print_freq=int(1e1),
+    #     iterations=int(5000)
+    # )
+    # calculate_store_plot_fp(
+    #     game ="leduc_poker",
+    #     players=2,
+    #     print_freq=int(1e1),
+    #     iterations=int(1e3)
+    # )

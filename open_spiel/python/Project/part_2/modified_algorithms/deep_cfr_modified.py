@@ -69,10 +69,14 @@ class FixedSizeRingBuffer(object):
         if len(self._data) < self._replay_buffer_capacity:
             self._data.append(element)
         else:
-            print("Memory has reached limit, old elements are removed.")
-            self._data[self._next_entry_index] = element
-            self ._next_entry_index += 1
-            self._next_entry_index %= self._replay_buffer_capacity
+            if isinstance(self._next_entry_index, float):
+                self._data[int(self._next_entry_index)] = element
+                self._next_entry_index += 1
+                self._next_entry_index %= self._replay_buffer_capacity
+            else:
+                self._data[self._next_entry_index] = element
+                self ._next_entry_index += 1
+                self._next_entry_index %= self._replay_buffer_capacity
 
     def sample(self, num_samples):
         """Returns `num_samples` uniformly sampled from the buffer.
@@ -87,9 +91,10 @@ class FixedSizeRingBuffer(object):
           ValueError: If there are less than `num_samples` elements in the buffer
         """
         if len(self._data) < num_samples:
-            raise ValueError("{} elements could not be sampled from size {}".format(
-                num_samples, len(self._data)))
-        return random.sample(self._data, num_samples)
+            #raise ValueError("{} elements could not be sampled from size {}".format(
+             #   num_samples, len(self._data)))
+            num_samples = int(len(self._data))
+        return random.sample(self._data, int(num_samples))
 
     def clear(self):
         self._data = []
@@ -157,6 +162,9 @@ class DeepCFRSolver(policy.Policy):
         self._num_traversals = num_traversals
         self._num_actions = game.num_distinct_actions()
         self._iteration = 1
+        self._memory_capacity = memory_capacity
+        self._policy_network_layers =  policy_network_layers
+        self._learning_rate = learning_rate
 
         # Create required TensorFlow placeholders to perform the Q-network updates.
         self._info_state_ph = tf.placeholder(
@@ -240,6 +248,10 @@ class DeepCFRSolver(policy.Policy):
             for key in self._advantage_networks[p].initializers:
                 self._advantage_networks[p].initializers[key]()
 
+    def reinitialize_policy_network(self):
+        for key in self._policy_network.initializers:
+            self._policy_network.initializers[key]()
+
     def solve(self):
         """Solution logic for Deep CFR."""
         advantage_losses = collections.defaultdict(list)
@@ -266,6 +278,7 @@ class DeepCFRSolver(policy.Policy):
             advantage_losses[p].append(self._learn_advantage_network(p))
         self._iteration += 1
         # Train policy network.
+        self.reinitialize_policy_network()
         policy_loss = self._learn_strategy_network()
         return self._policy_network, advantage_losses, policy_loss
 
@@ -281,6 +294,7 @@ class DeepCFRSolver(policy.Policy):
                 advantage_losses[p].append(self._learn_advantage_network(p))
             self._iteration += 1
         # Train policy network.
+        self.reinitialize_policy_network()
         policy_loss = self._learn_strategy_network()
         return self._policy_network, advantage_losses, policy_loss
 
@@ -412,6 +426,8 @@ class DeepCFRSolver(policy.Policy):
         Returns:
           The average loss obtained on this batch of transitions or `None`.
         """
+
+
         if self._batch_size_strategy:
             samples = self._strategy_memories.sample(self._batch_size_strategy)
         else:
