@@ -40,7 +40,7 @@ from open_spiel.python.project.part_2 import path_file
 
 
 def train_cfr(
-        game: str,
+        game_name: str,
         regret_matching_plus: bool,
         alternating_updates: bool,
         linear_averaging: bool,
@@ -52,16 +52,17 @@ def train_cfr(
 ) -> dict:
     data = {
         "players": players,
-        "game": game,
+        "game": game_name,
         "regret_matching_plus": regret_matching_plus,
         "alternating_updates": alternating_updates,
         "linear_averaging": linear_averaging,
+        "average_policy" : average_policy,
         "print_freq": print_freq,
         "exploitability": [],
         "iterations": []
     }
 
-    game = pyspiel.load_game(game,
+    game = pyspiel.load_game(game_name,
                              {"players": pyspiel.GameParameter(players)})
     cfr_solver = _CFRSolver(
         game=game,
@@ -83,6 +84,6 @@ def train_cfr(
             data["iterations"].append(i + 1)
 
     # save policies to csv
-    policy_to_csv(game, expl_policies, f"{modeldir}/test_p{1}.csv")
+    policy_to_csv(game, expl_policies, f"{modeldir}/test_p{1}_{game_name}.csv")
 
     return data
