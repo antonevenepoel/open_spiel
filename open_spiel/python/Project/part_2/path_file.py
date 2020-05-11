@@ -2,8 +2,10 @@ import os
 
 PATH_FLAG = False  # zet hier op True als je jouw path wilt gebruiken
 
-path_arnout = "/Users/arnouthillen/open_spiel/open_spiel/python/project/part_2/"
-path_anton = "/Users/antonevenepoel/Github/open_spiel2/open_spiel/python/project/part_2/"  # invullen
+
+path_arnout = "/Users/arnouthillen/open_spiel/open_spiel/python/project/part_2"
+path_anton = "/Users/antonevenepoel/Github/open_spiel2/open_spiel/python/project/part_2/rcfr-allin"  # invullen
+
 
 path = path_arnout if not PATH_FLAG else path_anton
 

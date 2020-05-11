@@ -1,0 +1,18 @@
+# game: leduc_poker 
+# eval_every: 1 
+# num_iterations: 3 
+# num_players: 2 
+# bootstrap: False 
+# truncate_negative: False 
+# buffer_size: -1 
+# num_hidden_layers: 3 
+# num_hidden_units: 50 
+# num_hidden_factors: 0 
+# use_skip_connections: True 
+# num_epochs: 200 
+# batch_size: 1000 
+# step_size: 0.01 
+# 
+2.951571832180045263e+00
+2.334456721976258642e+00
+1.999192697059974488e+00

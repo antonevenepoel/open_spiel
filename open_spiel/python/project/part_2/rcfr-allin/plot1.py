@@ -27,7 +27,7 @@ def calculate_store_plot_cfr(
 ):
     print("##### CFR #####")
     output = train_cfr(
-        game_name=game,
+        game=game,
         players=players,
         print_freq=print_freq,
         iterations=iterations,
@@ -43,8 +43,6 @@ def calculate_store_plot_cfr(
     for key, value in output.items():
         if key not in ["iterations", "exploitability"]:
             cfr_header += f"{key}: {value} \n"
-        elif key == "iterations" or key == "exploitability":
-            cfr_header += f"{key}: {value[-1]} \n"
     # Iterations
     path = establish_path(path_file.data_path + "cfr_" + str(
         output["iterations"][-1] // int(1e3)) + "k_iterations_ITER_" + str(game), path_file.data_type)
@@ -69,8 +67,8 @@ def calculate_store_plot_cfr(
                           + "cfr_" + str(output["iterations"][-1] // int(1e3)) + "k_iterations_" + str(game), path_file.plot_type)
     plt.title("CFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
-    plt.ylabel("Exploitability (mbb)", fontweight="bold")
-    plt.plot(output["iterations"], [i * 1000 for i in output["exploitability"]])
+    plt.ylabel("Exploitability", fontweight="bold")
+    plt.plot(output["iterations"], output["exploitability"])
     plt.loglog()
 
     plt.savefig(path)
@@ -418,31 +416,30 @@ def calculate_store_plot_rcfr(
 
 
 if __name__ == "__main__":
-
-    calculate_store_plot_dcfr_modified(
-        game_name="kuhn_poker",
-        eval_every=int(1e1),
-        num_iterations=int(1000),
-        num_traversals=1000,
-        policy_network_layers=(16,16),
-        advantage_network_layers=(16,16),
-        learning_rate=1e-2,
-        memory_capacity=1e7,
-        batch_size_advantage=None,
-        batch_size_strategy=None
-    )
-
-    # calculate_store_plot_rcfr(
-    #     game_name="leduc_poker",
-    #     eval_every= int(1),
-    #     num_iterations=int(3 ),
-    #     num_hidden_layers=int(3),
-    #     num_hidden_units=int(50),
-    #     num_hidden_factors=int(0),
-    #     batch_size = int(1000),
-    #     buffer_size=int(-1),
-    #     bootstrap=False,
+    # calculate_store_plot_dcfr_modified(
+    #     game_name="kuhn_poker",
+    #     eval_every=int(1e1),
+    #     num_iterations=int(1000),
+    #     num_traversals=1000,
+    #     policy_network_layers=(16,16),
+    #     advantage_network_layers=(16,16),
+    #     learning_rate=1e-2,
+    #     memory_capacity=1e7,
+    #     batch_size_advantage=None,
+    #     batch_size_strategy=None
     # )
+
+    calculate_store_plot_rcfr(
+        game_name="leduc_poker",
+        eval_every= int(1),
+        num_iterations=int(1000),
+        num_hidden_layers=int(2),
+        num_hidden_units=int(50),
+        num_hidden_factors=int(0),
+        batch_size=int(5000),
+        buffer_size=int(-1),
+        bootstrap=True,
+    )
 
     # calculate_store_plot_cfr(
     #     game ="leduc_poker",
@@ -466,15 +463,4 @@ if __name__ == "__main__":
     #     print_freq=1,
     #     iterations=int(1e1)
     # )
-
-    calculate_store_plot_cfr(
-        game="leduc_poker",
-        linear_averaging=True,
-        alternating_updates=True,
-        regret_matching_plus=True,
-        average_policy=False,
-        print_freq=1,
-        iterations=int(1e3))
-
-
 
