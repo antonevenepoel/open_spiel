@@ -1,6 +1,6 @@
 import os
 
-PATH_FLAG = True  # zet hier op True als je jouw path wilt gebruiken
+PATH_FLAG = False  # zet hier op True als je jouw path wilt gebruiken
 
 path_arnout = "/Users/arnouthillen/open_spiel/open_spiel/python/project/part_2/"
 path_anton = "/Users/antonevenepoel/Github/open_spiel2/open_spiel/python/project/part_2/"  # invullen
