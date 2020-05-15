@@ -5,12 +5,12 @@
 # bootstrap: False 
 # truncate_negative: False 
 # buffer_size: -1 
-# num_hidden_layers: 4 
+# num_hidden_layers: 3 
 # num_hidden_units: 20 
 # num_hidden_factors: 0 
 # use_skip_connections: True 
 # num_epochs: 200 
-# batch_size: 100 
+# batch_size: 5000 
 # step_size: 0.01 
 # 
 1.000000000000000000e+00

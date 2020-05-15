@@ -436,7 +436,7 @@ if __name__ == "__main__":
         num_hidden_layers=int(2),
         num_hidden_units=int(50),
         num_hidden_factors=int(0),
-        batch_size=int(5000),
+        batch_size=int(1000),
         buffer_size=int(-1),
         bootstrap=True,
     )
