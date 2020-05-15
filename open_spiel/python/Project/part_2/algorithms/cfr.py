@@ -36,6 +36,7 @@ from open_spiel.python.algorithms.cfr import _CFRSolver
 # flags.DEFINE_integer("players", 2, "Number of players")
 # flags.DEFINE_integer("print_freq", 10, "How often to print the exploitability")
 #from open_spiel.python.project.ML_project20.tournament import policy_to_csv
+from open_spiel.python.project.ML_project20.tournament import policy_to_csv
 from open_spiel.python.project.part_2 import path_file
 
 
