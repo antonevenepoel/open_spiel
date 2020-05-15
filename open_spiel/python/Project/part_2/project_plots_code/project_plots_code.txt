@@ -1,0 +1,2 @@
+Deze directory bevat de code en data voor het maken van de grafieken
+die getoond worden in het verslag (report 2 en 3).

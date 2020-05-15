@@ -3,6 +3,9 @@ import numpy as np
 
 from open_spiel.python.project.part_2 import path_file
 
+########
+# PLOT #
+########
 plt.plot(
     np.loadtxt("leduc_data/cfr_1k_iterations_ITER0.txt"),
     [i*10**3 for i in np.loadtxt("leduc_data/cfr_1k_iterations_EXPL0.txt")],
