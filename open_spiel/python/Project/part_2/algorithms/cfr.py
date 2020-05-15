@@ -36,7 +36,7 @@ from open_spiel.python.algorithms.cfr import _CFRSolver
 # flags.DEFINE_integer("players", 2, "Number of players")
 # flags.DEFINE_integer("print_freq", 10, "How often to print the exploitability")
 #from open_spiel.python.project.ML_project20.tournament import policy_to_csv
-from open_spiel.python.project.ML_project20.tournament import policy_to_csv
+from open_spiel.python.project.tournament import policy_to_csv
 from open_spiel.python.project.part_2 import path_file
 
 
@@ -49,7 +49,9 @@ def train_cfr(
         iterations: int,
         print_freq: int,
         players: int = 2,
-        modeldir = "./models"
+        modeldir: str = "./models",
+        calculate_model: bool = True,
+        print_current_exploitability=False,
 ) -> dict:
     data = {
         "players": players,
@@ -78,13 +80,15 @@ def train_cfr(
         if (i + 1) % print_freq == 0 or i == 0:  # FLAGS.print_freq == 0:
             expl_policies = cfr_solver.average_policy() if average_policy else cfr_solver.current_policy()
             conv = exploitability.exploitability(game, expl_policies)
-            print("Iteration {} exploitability {}".format(i + 1, conv))
+            if print_current_exploitability:
+                print("Iteration {} exploitability {}".format(i + 1, conv))
 
             # store info
             data["exploitability"].append(conv)
             data["iterations"].append(i + 1)
 
     # save policies to csv
-    policy_to_csv(game, expl_policies, f"{modeldir}/test_p{1}_{game_name}.csv")
+    if calculate_model:
+        policy_to_csv(game, expl_policies, f"{modeldir}/test_p{1}_{game_name}.csv")
 
     return data

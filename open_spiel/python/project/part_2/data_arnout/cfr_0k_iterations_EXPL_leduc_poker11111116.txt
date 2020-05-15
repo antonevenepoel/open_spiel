@@ -1,0 +1,15 @@
+# players: 2 
+# game: leduc_poker 
+# regret_matching_plus: True 
+# alternating_updates: True 
+# linear_averaging: True 
+# average_policy: True 
+# print_freq: 1 
+# exploitability: 1.371232370427995 
+# iterations: 5 
+# 
+2.373611111111110894e+00
+2.057916666666666838e+00
+1.793544082380370552e+00
+1.609655082121953296e+00
+1.371232370427994951e+00

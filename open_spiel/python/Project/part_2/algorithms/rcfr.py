@@ -12,43 +12,42 @@ import pyspiel
 tf.enable_eager_execution()
 
 
-
 def train_rcfr(
         game_name="kuhn_poker",
         eval_every=int(1e2),
         num_iterations=int(1e3),
-        num_players = 2,
+        num_players=2,
         bootstrap=False,
-        truncate_negative = False,
-        buffer_size = -1,
+        truncate_negative=False,
+        buffer_size=-1,
         num_hidden_layers=1,
         num_hidden_units=13,
-        num_hidden_factors = 8,
-        use_skip_connections = True,
-        num_epochs = 200,
+        num_hidden_factors=8,
+        use_skip_connections=True,
+        num_epochs=200,
         batch_size=100,
-        step_size=0.01
+        step_size=0.01,
+        print_current_exploitability=False
 ):
     data = {
         "game": game_name,
         "eval_every": eval_every,
         "num_iterations": num_iterations,
         "num_players": num_players,
-        "bootstrap" :bootstrap,
-        "truncate_negative" : truncate_negative,
-        "buffer_size": buffer_size ,
+        "bootstrap": bootstrap,
+        "truncate_negative": truncate_negative,
+        "buffer_size": buffer_size,
         "num_hidden_layers": num_hidden_layers,
         "num_hidden_units": num_hidden_units,
         "num_hidden_factors": num_hidden_factors,
         "use_skip_connections": use_skip_connections,
-        "num_epochs":  num_epochs,
-        "batch_size":  batch_size,
+        "num_epochs": num_epochs,
+        "batch_size": batch_size,
         "step_size": step_size,
         "iterations": [],
         "exploitability": [],
 
     }
-
 
     game = pyspiel.load_game(game_name,
                              {"players": pyspiel.GameParameter(num_players)})
@@ -99,7 +98,8 @@ def train_rcfr(
         solver.evaluate_and_update_policy(_train_fn)
         if i % eval_every == 0:
             conv = pyspiel.exploitability(game, solver.average_policy())
-            print("Iteration {} exploitability {}".format(i, conv))
+            if print_current_exploitability:
+                print("Iteration {} exploitability {}".format(i, conv))
 
         data["exploitability"].append(conv)
         data["iterations"].append(i + 1)

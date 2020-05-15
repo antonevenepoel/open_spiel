@@ -19,9 +19,10 @@ def calculate_store_plot_cfr(
         average_policy,
         print_freq,
         iterations,
+        print_current_exploitability,
         players=2
 ):
-    print("##### CFR #####")
+    #print("##### CFR #####")
     output = train_cfr(
         game_name=game,
         players=players,
@@ -30,7 +31,8 @@ def calculate_store_plot_cfr(
         average_policy=average_policy,
         regret_matching_plus=regret_matching_plus,
         alternating_updates=alternating_updates,
-        linear_averaging=linear_averaging
+        linear_averaging=linear_averaging,
+        print_current_exploitability=print_current_exploitability
     )
 
     # Save data in txt-file
@@ -345,9 +347,10 @@ def calculate_store_plot_rcfr(
         use_skip_connections=True,
         num_epochs=200,
         batch_size=100,
-        step_size=0.01
+        step_size=0.01,
+        print_current_exploitability=False
 ):
-    print("##### RCFR #####")
+    #print("##### RCFR #####")
     output = train_rcfr(
         game_name=game_name,
         eval_every=eval_every,
@@ -362,7 +365,8 @@ def calculate_store_plot_rcfr(
         use_skip_connections=use_skip_connections,
         num_epochs=num_epochs,
         batch_size=batch_size,
-        step_size=step_size
+        step_size=step_size,
+        print_current_exploitability=print_current_exploitability
     )
     #########################
     # Save data in txt-file #
@@ -394,7 +398,6 @@ def calculate_store_plot_rcfr(
     # Plots
     intermediary_path = path_file.plot_path + "rcfr_" + str(output["iterations"][-1]) + "_iterations"
     path = establish_path(intermediary_path, path_file.plot_type)
-    print(path)
     plt.title("RCFR: " + output["game"], fontweight="bold")
     plt.xlabel("Iterations", fontweight="bold")
     plt.ylabel("Exploitability", fontweight="bold")

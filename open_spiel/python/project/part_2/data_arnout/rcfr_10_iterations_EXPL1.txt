@@ -1,0 +1,25 @@
+# game: kuhn_poker 
+# eval_every: 1 
+# num_iterations: 10 
+# num_players: 2 
+# bootstrap: False 
+# truncate_negative: False 
+# buffer_size: -1 
+# num_hidden_layers: 2 
+# num_hidden_units: 6 
+# num_hidden_factors: 8 
+# use_skip_connections: True 
+# num_epochs: 10 
+# batch_size: 100 
+# step_size: 0.01 
+# 
+5.247508247403479542e-01
+4.112614594696744064e-01
+4.130631951727213869e-01
+4.164972108045791321e-01
+3.498644351822681187e-01
+3.164258486152813910e-01
+3.009840606429566301e-01
+2.771079542457168254e-01
+2.648367000393595516e-01
+2.487714201506326939e-01
